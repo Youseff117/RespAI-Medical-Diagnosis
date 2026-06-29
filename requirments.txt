@@ -1,0 +1,12 @@
+flask
+werkzeug
+pillow
+torch
+torchvision
+numpy
+scikit-image
+torchxrayvision
+matplotlib
+reportlab
+python-dotenv
+gunicorn

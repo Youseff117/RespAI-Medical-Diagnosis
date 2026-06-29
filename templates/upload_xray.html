@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RespAI – Upload X-Ray</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#03070f; --s1:#080f1e; --s2:#0c1628;
+      --cyan:#00e5ff; --blue:#0057ff; --red:#ff3b5c;
+      --amber:#ffaa00; --green:#00e096; --text:#d0daf0;
+      --dim:#5a6a8a; --border:rgba(0,229,255,.10);
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.4;}
+    .glow{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(0,87,255,.18) 0%,transparent 70%);pointer-events:none;z-index:0;}
+    nav{position:sticky;top:0;z-index:100;background:rgba(3,7,15,.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+    .brand{display:flex;align-items:center;gap:14px;text-decoration:none;}
+    .brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;}
+    .brand-name{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:3px;color:#fff;}
+    .brand-name em{color:var(--cyan);font-style:normal;}
+    .nav-right{display:flex;align-items:center;gap:16px;}
+    .nav-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);padding:4px 12px;border-radius:20px;}
+    .logout-btn{font-size:12px;color:var(--dim);text-decoration:none;border:1px solid var(--border);padding:6px 14px;border-radius:8px;transition:all .2s;}
+    .logout-btn:hover{border-color:var(--red);color:var(--red);}
+
+    .main{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:80px 24px;}
+    .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+    .eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--cyan);}
+    h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,5vw,46px);color:#fff;margin-bottom:12px;line-height:1.1;}
+    h1 span{color:var(--cyan);}
+    .sub{font-size:14px;color:var(--dim);margin-bottom:48px;line-height:1.7;}
+
+    .flash{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.3);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--red);margin-bottom:24px;}
+
+    .upload-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:48px;text-align:center;animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both;}
+
+    .drop-zone{border:2px dashed var(--border);border-radius:14px;padding:48px 24px;margin-bottom:28px;cursor:pointer;transition:all .3s;position:relative;}
+    .drop-zone:hover,.drop-zone.dragover{border-color:var(--cyan);background:rgba(0,229,255,.04);}
+    .drop-icon{font-size:48px;margin-bottom:16px;}
+    .drop-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:8px;}
+    .drop-sub{font-size:13px;color:var(--dim);}
+    .drop-sub span{color:var(--cyan);cursor:pointer;}
+    #fileInput{position:absolute;inset:0;opacity:0;cursor:pointer;}
+    .file-preview{display:none;margin-top:16px;padding:12px 16px;background:var(--s2);border-radius:10px;border:1px solid var(--border);font-size:13px;color:var(--text);text-align:left;}
+    .file-preview.show{display:flex;align-items:center;gap:10px;}
+
+    .btn-analyze{width:100%;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 0 30px rgba(0,87,255,.3);}
+    .btn-analyze:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,87,255,.4);}
+    .btn-analyze:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+    .info-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:32px;}
+    .info-item{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+    .info-val{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--cyan);margin-bottom:4px;}
+    .info-key{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+  </style>
+</head>
+<body>
+<div class="glow"></div>
+
+<nav>
+  <a class="brand" href="#">
+    <div class="brand-mark">R+</div>
+    <span class="brand-name">RESP<em>AI</em></span>
+  </a>
+  <div class="nav-right">
+    <span class="nav-tag">AI Diagnostic Platform</span>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Sign Out</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="eyebrow">Chest X-Ray Analysis</div>
+  <h1>Upload <span>X-Ray</span><br>for AI Analysis</h1>
+  <p class="sub">Upload a frontal chest X-ray image. Our AI model will analyze it for 14 pathologies using DenseNet-121 trained on Stanford CheXpert dataset.</p>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="flash">⚠️ {{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="upload-card">
+    <form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm">
+      <div class="drop-zone" id="dropZone">
+        <input type="file" name="xray" accept="image/*" required id="fileInput">
+        <div class="drop-icon">🫁</div>
+        <div class="drop-title">Drop X-Ray Image Here</div>
+        <div class="drop-sub">or <span>browse files</span> to upload</div>
+      </div>
+      <div class="file-preview" id="filePreview">
+        <span>📎</span>
+        <span id="fileName">No file selected</span>
+      </div>
+      <br>
+      <button type="submit" class="btn-analyze" id="analyzeBtn">
+        🔬 Analyze X-Ray
+      </button>
+    </form>
+
+    <div class="info-strip">
+      <div class="info-item">
+        <div class="info-val">14</div>
+        <div class="info-key">Pathologies</div>
+      </div>
+      <div class="info-item">
+        <div class="info-val">AI</div>
+        <div class="info-key">Grad-CAM</div>
+      </div>
+      <div class="info-item">
+        <div class="info-val">PDF</div>
+        <div class="info-key">Report</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const filePreview = document.getElementById('filePreview');
+  const fileName = document.getElementById('fileName');
+  const dropZone = document.getElementById('dropZone');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) {
+      fileName.textContent = fileInput.files[0].name;
+      filePreview.classList.add('show');
+    }
+  });
+
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    fileInput.files = e.dataTransfer.files;
+    if (fileInput.files.length > 0) {
+      fileName.textContent = fileInput.files[0].name;
+      filePreview.classList.add('show');
+    }
+  });
+
+  document.getElementById('uploadForm').addEventListener('submit', () => {
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = '⏳ Analyzing...';
+  });
+</script>
+</body>
+</html>

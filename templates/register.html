@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RespAI – Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#03070f;--s1:#080f1e;--s2:#0c1628;--cyan:#00e5ff;--blue:#0057ff;--red:#ff3b5c;--amber:#ffaa00;--green:#00e096;--text:#d0daf0;--dim:#5a6a8a;--border:rgba(0,229,255,.10);}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden;padding:24px;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.4;}
+    .glow{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(0,87,255,.18) 0%,transparent 70%);pointer-events:none;z-index:0;}
+    .card{position:relative;z-index:1;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:48px 40px;width:100%;max-width:460px;animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both;}
+    .logo{display:flex;align-items:center;gap:12px;margin-bottom:36px;justify-content:center;}
+    .logo-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;}
+    .logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;letter-spacing:3px;color:#fff;}
+    .logo-name em{color:var(--cyan);font-style:normal;}
+    h2{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:8px;text-align:center;}
+    .subtitle{font-size:13px;color:var(--dim);text-align:center;margin-bottom:28px;}
+    .flash{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.3);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--red);margin-bottom:20px;}
+    .role-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+    .role-btn{background:var(--s2);border:2px solid var(--border);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+    .role-btn input{position:absolute;opacity:0;width:0;height:0;}
+    .role-btn.selected{border-color:var(--cyan);background:rgba(0,229,255,.06);}
+    .role-icon{font-size:28px;margin-bottom:8px;}
+    .role-label{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;}
+    .role-desc{font-size:11px;color:var(--dim);}
+    .field{margin-bottom:18px;}
+    .field-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:8px;}
+    input[type=text],input[type=password]{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+    input[type=text]:focus,input[type=password]:focus{border-color:var(--cyan);}
+    .doctor-field{display:none;background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.15);border-radius:12px;padding:16px;margin-bottom:18px;}
+    .doctor-field.show{display:block;}
+    .doctor-field-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);display:block;margin-bottom:8px;}
+    .hint{font-size:11px;color:var(--dim);margin-top:8px;}
+    .btn-submit{width:100%;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;margin-top:8px;box-shadow:0 0 30px rgba(0,87,255,.3);}
+    .btn-submit:hover{opacity:.88;transform:translateY(-2px);}
+    .footer-link{text-align:center;margin-top:24px;font-size:13px;color:var(--dim);}
+    .footer-link a{color:var(--cyan);text-decoration:none;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+  </style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="card">
+  <div class="logo">
+    <div class="logo-mark">R+</div>
+    <span class="logo-name">RESP<em>AI</em></span>
+  </div>
+  <h2>Create Account</h2>
+  <p class="subtitle">Choose your account type to get started</p>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}{% for m in messages %}<div class="flash">⚠️ {{ m }}</div>{% endfor %}{% endif %}
+  {% endwith %}
+
+  <form method="POST">
+    <div class="role-toggle">
+      <label class="role-btn" id="doctorBtn" onclick="toggleRole('doctor')">
+        <input type="radio" name="role" value="doctor">
+        <div class="role-icon">👨‍⚕️</div>
+        <div class="role-label">Doctor</div>
+        <div class="role-desc">Manage patients & view reports</div>
+      </label>
+      <label class="role-btn selected" id="patientBtn" onclick="toggleRole('patient')">
+        <input type="radio" name="role" value="patient" checked>
+        <div class="role-icon">🫁</div>
+        <div class="role-label">Patient</div>
+        <div class="role-desc">Upload scans & view results</div>
+      </label>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Username</span>
+      <input type="text" name="username" placeholder="Choose a username" required>
+    </div>
+    <div class="field">
+      <span class="field-label">Password</span>
+      <input type="password" name="password" placeholder="Choose a password" required>
+    </div>
+
+    <!-- Doctor name — for patients only -->
+    <div class="doctor-field show" id="doctorField">
+      <span class="doctor-field-label">🩺 Doctor's Username</span>
+      <input type="text" name="doctor_name" placeholder="Enter your doctor's username" id="doctorNameInput">
+      <p class="hint">Enter the username of your doctor to link your account.</p>
+    </div>
+
+    <button type="submit" class="btn-submit">Create Account →</button>
+  </form>
+
+  <div class="footer-link">
+    Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+  </div>
+</div>
+
+<script>
+  function toggleRole(role) {
+    const doctorBtn = document.getElementById('doctorBtn');
+    const patientBtn = document.getElementById('patientBtn');
+    const doctorField = document.getElementById('doctorField');
+    const doctorNameInput = document.getElementById('doctorNameInput');
+
+    // Update radio buttons
+    document.querySelector('input[value="doctor"]').checked = (role === 'doctor');
+    document.querySelector('input[value="patient"]').checked = (role === 'patient');
+
+    if (role === 'doctor') {
+      doctorBtn.classList.add('selected');
+      patientBtn.classList.remove('selected');
+      doctorField.classList.remove('show');
+      doctorNameInput.required = false;
+    } else {
+      patientBtn.classList.add('selected');
+      doctorBtn.classList.remove('selected');
+      doctorField.classList.add('show');
+      doctorNameInput.required = true;
+    }
+  }
+</script>
+</body>
+</html>

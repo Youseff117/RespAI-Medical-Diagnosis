@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RespAI – Doctor Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#03070f;--s1:#080f1e;--s2:#0c1628;--cyan:#00e5ff;--blue:#0057ff;--red:#ff3b5c;--amber:#ffaa00;--green:#00e096;--text:#d0daf0;--dim:#5a6a8a;--border:rgba(0,229,255,.10);}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.4;}
+    .glow{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(0,87,255,.18) 0%,transparent 70%);pointer-events:none;z-index:0;}
+    nav{position:sticky;top:0;z-index:100;background:rgba(3,7,15,.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+    .brand{display:flex;align-items:center;gap:14px;text-decoration:none;}
+    .brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;}
+    .brand-name{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:3px;color:#fff;}
+    .brand-name em{color:var(--cyan);font-style:normal;}
+    .nav-right{display:flex;align-items:center;gap:16px;}
+    .nav-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);padding:4px 12px;border-radius:20px;}
+    .logout-btn{font-size:12px;color:var(--dim);text-decoration:none;border:1px solid var(--border);padding:6px 14px;border-radius:8px;transition:all .2s;}
+    .logout-btn:hover{border-color:var(--red);color:var(--red);}
+
+    .main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:56px 40px 80px;}
+
+    .hero-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+    .hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--cyan);}
+    h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,4vw,44px);color:#fff;margin-bottom:8px;}
+    h1 span{color:var(--cyan);}
+
+    /* Doctor ID card */
+    .doc-id-card{background:linear-gradient(120deg,rgba(0,87,255,.12),rgba(0,229,255,.06));border:1px solid rgba(0,229,255,.2);border-radius:16px;padding:20px 28px;display:flex;align-items:center;gap:20px;margin:28px 0 40px;}
+    .doc-id-icon{font-size:28px;width:52px;height:52px;border-radius:12px;background:rgba(0,229,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .doc-id-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px;}
+    .doc-id-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;letter-spacing:4px;}
+    .doc-id-hint{font-size:12px;color:var(--dim);margin-top:4px;}
+
+    /* Stats */
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;}
+    .stat-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px 24px;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+    .stat-card.blue::before{background:var(--blue);}
+    .stat-card.cyan::before{background:var(--cyan);}
+    .stat-card.green::before{background:var(--green);}
+    .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+    .stat-value{font-family:'Syne',sans-serif;font-weight:800;font-size:36px;color:#fff;}
+
+    /* Patients table */
+    .section-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:16px;}
+    .patients-grid{display:flex;flex-direction:column;gap:10px;}
+    .patient-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;transition:all .2s;text-decoration:none;}
+    .patient-card:hover{background:var(--s2);border-color:var(--cyan);transform:translateX(4px);}
+    .patient-left{display:flex;align-items:center;gap:16px;}
+    .patient-avatar{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;}
+    .patient-name{font-weight:600;font-size:15px;color:#fff;margin-bottom:3px;}
+    .patient-meta{font-size:12px;color:var(--dim);}
+    .patient-right{text-align:right;}
+    .scan-count{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--cyan);}
+    .scan-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;margin-top:4px;}
+    .badge.flagged{background:rgba(255,59,92,.15);color:var(--red);}
+    .badge.clear{background:rgba(0,224,150,.15);color:var(--green);}
+
+    .no-patients{background:var(--s1);border:1px dashed var(--border);border-radius:14px;padding:48px;text-align:center;color:var(--dim);}
+    .no-patients-icon{font-size:40px;margin-bottom:12px;}
+
+    @media(max-width:768px){.stats{grid-template-columns:1fr;}.main{padding:32px 20px 60px;}}
+  </style>
+</head>
+<body>
+<div class="glow"></div>
+
+<nav>
+  <a class="brand" href="#">
+    <div class="brand-mark">R+</div>
+    <span class="brand-name">RESP<em>AI</em></span>
+  </a>
+  <div class="nav-right">
+    <span class="nav-tag">Doctor Portal</span>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Sign Out</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="hero-eyebrow">Doctor Dashboard</div>
+  <h1>Welcome, <span>Dr. {{ doctor_name }}</span></h1>
+
+  <!-- Doctor ID -->
+  <div class="doc-id-card">
+    <div class="doc-id-icon">🪪</div>
+    <div>
+      <div class="doc-id-label">Your Doctor ID — Share with patients</div>
+      <div class="doc-id-value">{{ doctor_id }}</div>
+      <div class="doc-id-hint">Patients use this ID when registering to link their account to you</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card blue">
+      <div class="stat-label">Total Patients</div>
+      <div class="stat-value">{{ patients | length }}</div>
+    </div>
+    <div class="stat-card cyan">
+      <div class="stat-label">Total Scans</div>
+      <div class="stat-value">{{ patients | sum(attribute='scan_count') }}</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Active Cases</div>
+      <div class="stat-value">{{ patients | selectattr('scan_count', 'gt', 0) | list | length }}</div>
+    </div>
+  </div>
+
+  <!-- Patients List -->
+  <div class="section-title">Your Patients</div>
+
+  {% if patients %}
+  <div class="patients-grid">
+    {% for p in patients %}
+    <a class="patient-card" href="{{ url_for('patient_detail', patient_name=p.username) }}">
+      <div class="patient-left">
+        <div class="patient-avatar">{{ p.username[0].upper() }}</div>
+        <div>
+          <div class="patient-name">{{ p.username }}</div>
+          <div class="patient-meta">Last scan: {{ p.last_scan }}</div>
+        </div>
+      </div>
+      <div class="patient-right">
+        <div class="scan-count">{{ p.scan_count }}</div>
+        <div class="scan-label">Scans</div>
+        {% if p.scan_count > 0 %}
+          {% if '⚠️' in p.last_diagnosis %}
+            <span class="badge flagged">Findings Detected</span>
+          {% else %}
+            <span class="badge clear">Clear</span>
+          {% endif %}
+        {% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="no-patients">
+    <div class="no-patients-icon">👤</div>
+    <p>No patients yet. Share your Doctor ID <strong>{{ doctor_id }}</strong> with your patients so they can register and link their account to you.</p>
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>

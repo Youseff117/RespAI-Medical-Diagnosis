@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RespAI – Diagnostic Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#03070f; --s1:#080f1e; --s2:#0c1628;
+      --cyan:#00e5ff; --blue:#0057ff; --red:#ff3b5c;
+      --amber:#ffaa00; --green:#00e096; --text:#d0daf0;
+      --dim:#5a6a8a; --border:rgba(0,229,255,.10);
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:400;min-height:100vh;overflow-x:hidden;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.4;}
+    .glow-top{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(0,87,255,.18) 0%,transparent 70%);pointer-events:none;z-index:0;}
+    nav{position:sticky;top:0;z-index:100;background:rgba(3,7,15,.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+    .brand{display:flex;align-items:center;gap:14px;text-decoration:none;}
+    .brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;}
+    .brand-name{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:3px;color:#fff;}
+    .brand-name em{color:var(--cyan);font-style:normal;}
+    .nav-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);padding:4px 12px;border-radius:20px;}
+    .hero{position:relative;z-index:1;padding:56px 48px 40px;max-width:1200px;margin:0 auto;animation:fadeSlideDown .7s cubic-bezier(.22,1,.36,1) both;}
+    .hero-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+    .hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--cyan);}
+    .hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(32px,5vw,54px);line-height:1.05;color:#fff;margin-bottom:16px;}
+    .hero h1 span{color:var(--cyan);}
+    .hero-sub{font-size:14px;color:var(--dim);max-width:520px;line-height:1.7;}
+    .summary-strip{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 40px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;animation:fadeSlideUp .6s .15s cubic-bezier(.22,1,.36,1) both;}
+    .stat-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px 26px;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+    .stat-card.danger::before{background:var(--red);}
+    .stat-card.caution::before{background:var(--amber);}
+    .stat-card.safe::before{background:var(--green);}
+    .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;}
+    .stat-value{font-family:'Syne',sans-serif;font-weight:800;font-size:42px;line-height:1;margin-bottom:4px;}
+    .stat-card.danger .stat-value{color:var(--red);}
+    .stat-card.caution .stat-value{color:var(--amber);}
+    .stat-card.safe .stat-value{color:var(--green);}
+    .stat-desc{font-size:12px;color:var(--dim);}
+
+    /* Clinical Summary */
+    .clinical-summary{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 36px;animation:fadeSlideUp .6s .22s cubic-bezier(.22,1,.36,1) both;}
+    .clinical-inner{background:linear-gradient(120deg,rgba(0,87,255,.10),rgba(0,229,255,.04));border:1px solid rgba(0,229,255,.18);border-radius:16px;padding:24px 30px;}
+    .clinical-top{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
+    .clinical-icon{width:44px;height:44px;border-radius:10px;background:rgba(0,229,255,.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+    .clinical-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:4px;}
+    .clinical-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+    .clinical-text{font-size:13px;color:var(--text);line-height:1.8;border-left:2px solid var(--cyan);padding-left:16px;}
+    .clinical-time{font-size:10px;color:var(--dim);margin-top:12px;text-align:right;}
+
+    .diagnosis-banner{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 36px;animation:fadeSlideUp .6s .2s cubic-bezier(.22,1,.36,1) both;}
+    .banner-inner{background:linear-gradient(120deg,rgba(0,87,255,.12),rgba(0,229,255,.06));border:1px solid rgba(0,229,255,.2);border-radius:16px;padding:24px 30px;display:flex;align-items:center;gap:20px;}
+    .banner-icon{font-size:32px;flex-shrink:0;width:56px;height:56px;border-radius:12px;background:rgba(0,229,255,.1);display:flex;align-items:center;justify-content:center;}
+    .banner-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px;}
+    .banner-text{font-size:16px;font-weight:500;color:#fff;}
+
+    .main-grid{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 80px;display:grid;grid-template-columns:280px 1fr;gap:28px;align-items:start;}
+    @media(max-width:768px){.main-grid{grid-template-columns:1fr;padding:0 20px 60px;}.summary-strip{grid-template-columns:1fr;padding:0 20px 32px;}.hero,.diagnosis-banner,.clinical-summary{padding-left:20px;padding-right:20px;}}
+
+    .scan-panel{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;position:sticky;top:80px;animation:fadeSlideUp .6s .25s cubic-bezier(.22,1,.36,1) both;}
+    .scan-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+    .scan-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);}
+    .scan-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);font-weight:500;}
+    .scan-panel img{width:100%;display:block;filter:contrast(1.08) brightness(.96) saturate(0.1);}
+    .scan-meta{padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .meta-key{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:3px;}
+    .meta-val{font-size:12px;color:var(--text);font-weight:500;word-break:break-all;}
+    .heatmap-header{padding:14px 18px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:rgba(255,170,0,.04);}
+    .heatmap-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);}
+    .heatmap-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);font-weight:500;}
+    .scan-panel img.heatmap-img{filter:none;}
+    .heatmap-caption{padding:10px 18px 14px;font-size:10.5px;color:var(--dim);line-height:1.6;}
+
+    .results-col{animation:fadeSlideUp .6s .3s cubic-bezier(.22,1,.36,1) both;}
+    .results-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;}
+    .results-sub{font-size:12px;color:var(--dim);margin-top:3px;margin-bottom:20px;}
+    .d-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:10px;transition:border-color .25s,transform .25s,background .25s;cursor:default;border-left:3px solid;}
+    .d-card:hover{background:var(--s2);transform:translateX(6px);}
+    .d-card.lv-high{border-left-color:var(--red);background:rgba(255,59,92,.03);}
+    .d-card.lv-mid{border-left-color:var(--amber);background:rgba(255,170,0,.03);}
+    .d-card.lv-low{border-left-color:var(--green);}
+    .d-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+    .d-name{font-weight:600;font-size:15px;color:#fff;margin-bottom:3px;}
+    .d-ar{font-size:12px;color:var(--dim);}
+    .d-right{text-align:right;}
+    .d-pct{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;line-height:1;}
+    .lv-high .d-pct{color:var(--red);}
+    .lv-mid .d-pct{color:var(--amber);}
+    .lv-low .d-pct{color:var(--green);}
+    .d-status{font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:4px;color:var(--dim);}
+    .bar-wrap{height:5px;background:rgba(255,255,255,.05);border-radius:10px;overflow:hidden;margin-bottom:12px;}
+    .bar{height:100%;border-radius:10px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+    .lv-high .bar{background:linear-gradient(90deg,#ff3b5c,#ff6b86);}
+    .lv-mid .bar{background:linear-gradient(90deg,#ffaa00,#ffd460);}
+    .lv-low .bar{background:linear-gradient(90deg,#00e096,#6effd4);}
+    .d-desc{font-size:12px;color:var(--dim);line-height:1.6;}
+    .no-findings{background:rgba(0,224,150,.05);border:1px solid rgba(0,224,150,.2);border-radius:14px;padding:40px;text-align:center;}
+    .no-findings-icon{font-size:48px;margin-bottom:16px;}
+    .no-findings-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--green);margin-bottom:8px;}
+    .no-findings-sub{font-size:14px;color:var(--dim);}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px;}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:10px;font-size:14px;font-weight:500;text-decoration:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-weight:600;box-shadow:0 0 30px rgba(0,87,255,.3);}
+    .btn-primary:hover{opacity:.88;transform:translateY(-2px);}
+    .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+    .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+    footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:24px 48px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--dim);flex-wrap:wrap;gap:12px;}
+    footer strong{color:var(--cyan);}
+    .disclaimer{display:flex;align-items:center;gap:8px;background:rgba(255,170,0,.07);border:1px solid rgba(255,170,0,.2);border-radius:8px;padding:8px 14px;font-size:11px;color:var(--amber);max-width:500px;}
+    @keyframes fadeSlideDown{from{opacity:0;transform:translateY(-24px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeSlideUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+  </style>
+</head>
+<body>
+<div class="glow-top"></div>
+
+<nav>
+  <a class="brand" href="#">
+    <div class="brand-mark">R+</div>
+    <span class="brand-name">RESP<em>AI</em></span>
+  </a>
+  <div class="nav-right">
+    <span class="nav-tag">AI Diagnostic Platform</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Chest X-Ray Report</div>
+  <h1>Pathology <span>Analysis</span><br>Results</h1>
+  <p class="hero-sub">AI-powered analysis using DenseNet-121 trained on CheXpert dataset from Stanford University.</p>
+</div>
+
+{% set flagged_results = results | selectattr('flagged') | list %}
+{% set flagged_count = flagged_results | length %}
+{% set safe_count = results | length - flagged_count %}
+
+<div class="summary-strip">
+  <div class="stat-card danger">
+    <div class="stat-label">Flagged Conditions</div>
+    <div class="stat-value">{{ flagged_count }}</div>
+    <div class="stat-desc">Require medical review</div>
+  </div>
+  <div class="stat-card safe">
+    <div class="stat-label">Clear Conditions</div>
+    <div class="stat-value">{{ safe_count }}</div>
+    <div class="stat-desc">Within normal range</div>
+  </div>
+  <div class="stat-card caution">
+    <div class="stat-label">Conditions Scanned</div>
+    <div class="stat-value">{{ results | length }}</div>
+    <div class="stat-desc">Total pathologies analyzed</div>
+  </div>
+</div>
+
+<!-- AI CLINICAL SUMMARY -->
+<div class="clinical-summary">
+  <div class="clinical-inner">
+    <div class="clinical-top">
+      <div class="clinical-icon">🧠</div>
+      <div>
+        <div class="clinical-label">AI Clinical Summary</div>
+        <div class="clinical-title">Automated Radiological Impression</div>
+      </div>
+    </div>
+    <div class="clinical-text">{{ clinical_summary }}</div>
+    <div class="clinical-time">Analysis performed: {{ analysis_time }}</div>
+  </div>
+</div>
+
+<!-- APPROVED BADGE -->
+{% if approved_by %}
+<div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 20px;">
+  <div style="background:rgba(0,224,150,.08);border:1px solid rgba(0,224,150,.3);border-radius:14px;padding:16px 24px;display:flex;align-items:center;gap:14px;">
+    <span style="font-size:24px;">✅</span>
+    <div>
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#00e096;margin-bottom:4px;">Doctor Approved</div>
+      <div style="font-size:14px;font-weight:500;color:#fff;">This result has been reviewed and approved by <strong>Dr. {{ approved_by }}</strong> on {{ approved_at }}</div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- DIAGNOSIS BANNER -->
+<div class="diagnosis-banner">
+  <div class="banner-inner">
+    <div class="banner-icon">🩺</div>
+    <div>
+      <div class="banner-label">AI Diagnosis Summary</div>
+      <div class="banner-text">{{ diagnosis }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="main-grid">
+  <div class="scan-panel">
+    <div class="scan-header">
+      <div class="scan-dot"></div>
+      <span class="scan-title">Scan Input</span>
+    </div>
+    <img src="{{ url_for('static', filename='uploads/' ~ filename) }}" alt="X-ray Scan">
+
+    {% if heatmap_filename %}
+    <div class="heatmap-header">
+      <div class="heatmap-dot"></div>
+      <span class="heatmap-title">AI Focus Area (Grad-CAM)</span>
+    </div>
+    <img class="heatmap-img" src="{{ url_for('static', filename='heatmaps/' ~ heatmap_filename) }}" alt="Grad-CAM Heatmap">
+    <div class="heatmap-caption">
+      Highlighted regions show where the AI model focused most when detecting the top finding. Red/yellow areas indicate higher influence on the prediction.
+    </div>
+    {% endif %}
+
+    <div class="scan-meta">
+      <div class="meta-item">
+        <div class="meta-key">File</div>
+        <div class="meta-val">{{ filename }}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-key">Model</div>
+        <div class="meta-val">DenseNet-121</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-key">Dataset</div>
+        <div class="meta-val">CheXpert</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-key">Classes</div>
+        <div class="meta-val">14 Pathologies</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-col">
+    <div class="results-title">Detailed Analysis</div>
+    <div class="results-sub">Showing flagged findings only · sorted by probability</div>
+
+    {% if flagged_results %}
+      {% for r in flagged_results %}
+        {% if r.probability > 60 %}{% set lv = 'lv-high' %}
+        {% elif r.probability > 40 %}{% set lv = 'lv-mid' %}
+        {% else %}{% set lv = 'lv-low' %}{% endif %}
+
+        <div class="d-card {{ lv }}" style="animation:fadeSlideUp .4s {{ loop.index * 0.06 }}s cubic-bezier(.22,1,.36,1) both">
+          <div class="d-top">
+            <div>
+              <div class="d-name">{{ r.disease }}</div>
+              <div class="d-ar">{{ r.ar_name }}</div>
+            </div>
+            <div class="d-right">
+              <div class="d-pct">{{ "%.1f"|format(r.probability) }}<small style="font-size:14px;font-weight:400">%</small></div>
+              <div class="d-status">{{ r.status }}</div>
+            </div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar" style="width:{{ r.probability }}%"></div>
+          </div>
+          <div class="d-desc">{{ r.description }}</div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="no-findings">
+        <div class="no-findings-icon">✅</div>
+        <div class="no-findings-title">No Significant Findings</div>
+        <div class="no-findings-sub">All pathologies are within normal range. No medical review required.</div>
+      </div>
+    {% endif %}
+
+    <div class="actions">
+      <a href="{{ url_for('download_report') }}" class="btn btn-primary">📥 Download PDF Report</a>
+      <a href="{{ url_for('upload_xray') }}" class="btn btn-ghost">⬅️ New Scan</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div><strong>RESPAI</strong> ©️ 2025 · AI-Powered Respiratory Diagnostics</div>
+  <div class="disclaimer">⚠️ For clinical reference only · Not a substitute for professional medical diagnosis</div>
+</footer>
+</body>
+</html>

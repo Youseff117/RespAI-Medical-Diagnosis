@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RespAI – Patient Detail</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#03070f;--s1:#080f1e;--s2:#0c1628;--cyan:#00e5ff;--blue:#0057ff;--red:#ff3b5c;--amber:#ffaa00;--green:#00e096;--text:#d0daf0;--dim:#5a6a8a;--border:rgba(0,229,255,.10);}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.4;}
+    nav{position:sticky;top:0;z-index:100;background:rgba(3,7,15,.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+    .brand{display:flex;align-items:center;gap:14px;text-decoration:none;}
+    .brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;}
+    .brand-name{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:3px;color:#fff;}
+    .brand-name em{color:var(--cyan);font-style:normal;}
+    .nav-right{display:flex;gap:12px;align-items:center;}
+    .back-btn{font-size:12px;color:var(--cyan);text-decoration:none;border:1px solid rgba(0,229,255,.3);padding:6px 14px;border-radius:8px;}
+    .logout-btn{font-size:12px;color:var(--dim);text-decoration:none;border:1px solid var(--border);padding:6px 14px;border-radius:8px;}
+    .main{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:56px 40px 80px;}
+    .hero-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+    .hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--cyan);}
+    h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(24px,4vw,38px);color:#fff;margin-bottom:32px;}
+    h1 span{color:var(--cyan);}
+
+    .scan-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both;}
+    .scan-card.approved{border-color:rgba(0,224,150,.3);background:rgba(0,224,150,.02);}
+    .scan-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+    .scan-num{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--cyan);}
+    .scan-time{font-size:11px;color:var(--dim);}
+    .scan-diagnosis{font-size:14px;font-weight:500;color:#fff;margin-bottom:8px;}
+    .scan-summary{font-size:12px;color:var(--dim);line-height:1.7;border-left:2px solid var(--border);padding-left:12px;margin-bottom:16px;}
+    .scan-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+    .scan-tag{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--dim);}
+    .scan-tag.flagged{border-color:rgba(255,59,92,.4);color:var(--red);background:rgba(255,59,92,.08);}
+    .scan-tag.clear{border-color:rgba(0,224,150,.4);color:var(--green);background:rgba(0,224,150,.08);}
+    .scan-tag.approved-tag{border-color:rgba(0,224,150,.4);color:var(--green);background:rgba(0,224,150,.08);font-weight:600;}
+
+    /* Doctor Note display */
+    .doctor-note-display{background:rgba(0,87,255,.06);border:1px solid rgba(0,87,255,.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
+    .doctor-note-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px;}
+    .doctor-note-text{font-size:13px;color:var(--text);line-height:1.7;}
+
+    /* Images */
+    .scan-images{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+    .img-wrap{text-align:center;cursor:pointer;}
+    .img-wrap img{width:90px;height:90px;border-radius:10px;object-fit:cover;border:1px solid var(--border);transition:all .2s;}
+    .img-wrap img:hover{border-color:var(--cyan);transform:scale(1.05);}
+    .img-wrap span{display:block;font-size:9px;color:var(--dim);margin-top:5px;letter-spacing:1px;text-transform:uppercase;}
+
+    /* Buttons */
+    .approve-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;background:rgba(0,224,150,.12);color:var(--green);border:1px solid rgba(0,224,150,.3);}
+    .approve-btn:hover{background:rgba(0,224,150,.22);transform:translateY(-1px);}
+    .revoke-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;background:rgba(255,59,92,.08);color:var(--red);border:1px solid rgba(255,59,92,.3);}
+    .revoke-btn:hover{background:rgba(255,59,92,.16);transform:translateY(-1px);}
+    .approved-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;background:rgba(0,224,150,.08);color:var(--green);border:1px solid rgba(0,224,150,.3);}
+    .scan-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+
+    /* Confirm Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8888;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:36px;max-width:460px;width:90%;animation:fadeUp .3s cubic-bezier(.22,1,.36,1);}
+    .modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;}
+    .modal-sub{font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6;}
+    .modal-note-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;display:block;}
+    .modal-textarea{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:90px;transition:border-color .2s;margin-bottom:20px;}
+    .modal-textarea:focus{border-color:var(--cyan);}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+    .modal-cancel{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;background:transparent;color:var(--dim);border:1px solid var(--border);transition:all .2s;}
+    .modal-cancel:hover{border-color:var(--text);color:var(--text);}
+    .modal-confirm{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:rgba(0,224,150,.15);color:var(--green);border:1px solid rgba(0,224,150,.3);transition:all .2s;}
+    .modal-confirm:hover{background:rgba(0,224,150,.25);}
+    .modal-confirm-revoke{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:rgba(255,59,92,.12);color:var(--red);border:1px solid rgba(255,59,92,.3);transition:all .2s;}
+    .modal-confirm-revoke:hover{background:rgba(255,59,92,.22);}
+
+    /* Lightbox */
+    .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;}
+    .lightbox.open{display:flex;}
+    .lightbox img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:12px;box-shadow:0 0 60px rgba(0,229,255,.1);}
+    .lightbox-close{position:absolute;top:20px;right:28px;font-size:32px;color:#fff;cursor:pointer;opacity:.7;transition:.2s;}
+    .lightbox-close:hover{opacity:1;}
+    .lightbox-label{color:var(--dim);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:14px;}
+
+    .no-scans{background:var(--s1);border:1px dashed var(--border);border-radius:14px;padding:48px;text-align:center;color:var(--dim);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  </style>
+</head>
+<body>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <span class="lightbox-close" onclick="closeLightbox()">✕</span>
+  <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-label" id="lightboxLabel"></div>
+</div>
+
+<!-- Approve Confirm Modal -->
+<div class="modal-overlay" id="approveModal">
+  <div class="modal">
+    <div class="modal-title">✅ Confirm Approval</div>
+    <div class="modal-sub">You are about to approve this scan result. You can add an optional clinical note that will be visible to the patient.</div>
+    <label class="modal-note-label">🏥 Doctor Final Diagnosis</label>
+    <select id="doctorDiagnosisInput" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-size:14px;font-family:Inter,sans-serif;outline:none;margin-bottom:16px;">
+      <option value="">-- Select Diagnosis --</option>
+      {% for d in doctor_diagnoses %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
+    </select>
+    <label class="modal-note-label">Doctor's Note (optional)</label>
+    <textarea class="modal-textarea" id="doctorNoteInput" placeholder="e.g. Results reviewed. Please follow up in 2 weeks..."></textarea>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('approveModal')">Cancel</button>
+      <button class="modal-confirm" id="approveConfirmBtn" onclick="submitApprove()">✅ Confirm Approve</button>
+    </div>
+  </div>
+</div>
+
+<!-- Revoke Confirm Modal -->
+<div class="modal-overlay" id="revokeModal">
+  <div class="modal">
+    <div class="modal-title">↩️ Revoke Approval</div>
+    <div class="modal-sub">Are you sure you want to revoke the approval for this scan? The patient will no longer see it as approved.</div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('revokeModal')">Cancel</button>
+      <button class="modal-confirm-revoke" id="revokeConfirmBtn" onclick="submitRevoke()">↩️ Confirm Revoke</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden forms -->
+<form id="approveForm" method="POST" style="display:none">
+  <input type="hidden" name="doctor_final_diagnosis" id="doctorDiagnosisHidden">
+  <input type="hidden" name="doctor_note" id="doctorNoteHidden">
+</form>
+<form id="revokeForm" method="POST" style="display:none"></form>
+
+<nav>
+  <a class="brand" href="#">
+    <div class="brand-mark">R+</div>
+    <span class="brand-name">RESP<em>AI</em></span>
+  </a>
+  <div class="nav-right">
+    <a href="{{ url_for('doctor_dashboard') }}" class="back-btn">← Back</a>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Sign Out</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="hero-eyebrow">Patient Record</div>
+  <h1>{{ patient_name }}'s <span>Scan History</span></h1>
+
+  {% if scans %}
+    {% for scan in scans | reverse %}
+    
+    <div class="scan-card {% if scan.approved %}approved{% endif %}" style="animation-delay:{{ loop.index * 0.05 }}s">
+      <div class="scan-header">
+        <div>
+          <div class="scan-num">Scan #{{ scans | length - loop.index0 }}</div>
+          <div class="scan-time">{{ scan.analysis_time }}</div>
+        </div>
+        <div class="scan-images">
+          <div class="img-wrap" onclick="openLightbox('{{ url_for('static', filename='uploads/' ~ scan.filename) }}', 'X-Ray — {{ scan.filename }}')">
+            <img src="{{ url_for('static', filename='uploads/' ~ scan.filename) }}" alt="X-ray">
+            <span>🔍 X-Ray</span>
+          </div>
+          {% if scan.heatmap_filename %}
+          <div class="img-wrap" onclick="openLightbox('{{ url_for('static', filename='heatmaps/' ~ scan.heatmap_filename) }}', 'Grad-CAM — AI Focus Area')">
+            <img src="{{ url_for('static', filename='heatmaps/' ~ scan.heatmap_filename) }}" alt="Heatmap" style="filter:none;">
+            <span>🔍 Grad-CAM</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="scan-diagnosis">{{ scan.diagnosis }}</div>
+      <div class="scan-summary">{{ scan.clinical_summary }}</div>
+
+      {% if scan.doctor_final_diagnosis %}
+      <div class="doctor-note-display" style="background:rgba(0,224,150,.05);border-color:rgba(0,224,150,.2);margin-bottom:8px;">
+        <div class="doctor-note-label" style="color:var(--green);">🏥 Doctor Final Diagnosis</div>
+        <div class="doctor-note-text" style="font-size:15px;font-weight:600;color:var(--green);">{{ scan.doctor_final_diagnosis }}</div>
+      </div>
+      {% endif %}
+      {% if scan.doctor_note %}
+      <div class="doctor-note-display">
+        <div class="doctor-note-label">🩺 Doctor's Note</div>
+        <div class="doctor-note-text">{{ scan.doctor_note }}</div>
+      </div>
+      {% endif %}
+
+      <div class="scan-meta">
+        <span class="scan-tag">📁 {{ scan.filename }}</span>
+        <span class="scan-tag">🔬 {{ scan.top_finding }}</span>
+        {% if scan.flagged_count > 0 %}
+          <span class="scan-tag flagged">⚠️ {{ scan.flagged_count }} finding(s)</span>
+        {% else %}
+          <span class="scan-tag clear">✅ Clear</span>
+        {% endif %}
+        {% if scan.approved %}
+          <span class="scan-tag approved-tag">✅ Approved by Dr. {{ scan.approved_by }}</span>
+        {% endif %}
+      </div>
+
+      <div class="scan-actions">
+        {% if scan.approved %}
+          <div class="approved-badge">✅ Approved on {{ scan.approved_at }}</div>
+          <button class="revoke-btn" onclick="openRevoke('{{ url_for('revoke_scan', patient_name=patient_name, scan_id=scan.id) }}')">↩️ Revoke</button>
+        {% else %}
+          <button class="approve-btn" onclick="openApprove('{{ url_for('approve_scan', patient_name=patient_name, scan_id=scan.id) }}')">✅ Approve Result</button>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+
+  {% else %}
+    <div class="no-scans">
+      <p style="font-size:36px;margin-bottom:12px">🫁</p>
+      <p>No scans uploaded yet for this patient.</p>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  // Lightbox
+  function openLightbox(src, label) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxLabel').textContent = label;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox(e) {
+    if (!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeModal('approveModal'); closeModal('revokeModal'); }});
+
+  // Modals
+  let currentApproveUrl = '';
+  let currentRevokeUrl = '';
+
+  function openApprove(url) {
+    currentApproveUrl = url;
+    document.getElementById('doctorNoteInput').value = '';
+    document.getElementById('approveModal').classList.add('open');
+  }
+
+  function openRevoke(url) {
+    currentRevokeUrl = url;
+    document.getElementById('revokeModal').classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  function submitApprove() {
+    const diag = document.getElementById("doctorDiagnosisInput").value;
+    document.getElementById("doctorDiagnosisHidden").value = diag;
+    const note = document.getElementById('doctorNoteInput').value;
+    const form = document.getElementById('approveForm');
+    document.getElementById('doctorNoteHidden').value = note;
+    form.action = currentApproveUrl;
+    form.submit();
+  }
+
+  function submitRevoke() {
+    const form = document.getElementById('revokeForm');
+    form.action = currentRevokeUrl;
+    form.submit();
+  }
+</script>
+</body>
+</html>
