@@ -1,8 +1,49 @@
+# === Environment & secrets ===
 .env
+
+# === Python ===
 __pycache__/
 *.pyc
+
+# === Database ===
 respai.db
+*.sqlite
+*.sqlite3
+instance/
+
+# === Medical / patient data ===
 static/uploads/
 static/heatmaps/
+uploads/
+dataset/
+
+# === AI model weights ===
 *.pth
+*.h5
+*.onnx
+*.pt
+
+# === Virtual environment ===
 venv/
+
+# === Old / unused project files ===
+model/
+pdf/
+report_utils.py
+result_filter.py
+test_flask.py
+test_model.py
+xray_test.py
+xray_sample.jpg
+uploaded_xray.jpg
+view_results.py
+train.py
+create_model.py
+model.py
+login_ui.py
+dashboard.py
+init_db.py
+procfile
+requirments.txt
+screenshots/
+ChexNet-master/
