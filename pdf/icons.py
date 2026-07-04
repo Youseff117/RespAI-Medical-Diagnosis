@@ -1,167 +1,176 @@
 """
-Vector Icons for PDF Report
-============================
+Vector Icons for PDF Report (SVG version)
+===========================================
+
+Same icon set and names as the original ReportLab implementation, redrawn as
+inline SVG so WeasyPrint can render them directly inside the HTML document.
 """
 
-from reportlab.graphics.shapes import (
-    Drawing, Rect, Line, Circle, Polygon
-)
-from .config import (
-    PRIMARY_BLUE, SOFT_BLUE,
-    STATUS_BG, STATUS_ACCENT
-)
-from reportlab.lib import colors
+from .config import PRIMARY_BLUE, SOFT_BLUE, STATUS_BG, STATUS_ACCENT, LOGO_BLUE, LOGO_CYAN
+
+_HEATMAP_COLORS = [
+    '#4CAF50', '#FFEB3B', '#FF9800',
+    '#FFEB3B', '#F44336', '#FF9800',
+    '#4CAF50', '#FF9800', '#FFEB3B',
+]
 
 
-def vector_icon(name, size=0.5, color=None, unit='cm'):
-    """Return a vector icon as a ReportLab Drawing object."""
+def vector_icon(name, size=28, color=None):
+    """
+    Return an inline SVG icon string, in a 100x100 viewBox scaled to `size` px.
+
+    Args:
+        name: icon name (same set as the original module)
+        size: rendered size in pixels (int or CSS length string)
+        color: main stroke/fill color (default: PRIMARY_BLUE)
+
+    Returns:
+        str: an <svg>...</svg> string.
+    """
     if color is None:
         color = PRIMARY_BLUE
-    
-    d = Drawing(size, size)
-    s = size
-    
-    if name == "summary":
-        d.add(Rect(0, 0, s, s, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Rect(s * 0.2, s * 0.55, s * 0.6, s * 0.12, fillColor=color, strokeColor=None))
-        d.add(Rect(s * 0.2, s * 0.32, s * 0.45, s * 0.12, fillColor=color, strokeColor=None))
-        d.add(Rect(s * 0.2, s * 0.1, s * 0.55, s * 0.12, fillColor=color, strokeColor=None))
-    
+    sz = f"{size}px" if isinstance(size, (int, float)) else size
+    s = 100  # internal coordinate space
+
+    body = ""
+
+    if name == "logo":
+        # RespAI brand mark: gradient squircle badge with "R+" monogram.
+        # Used on the cover page and anywhere the actual brand icon (not a
+        # generic pictogram) is needed.
+        body = f"""
+        <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="{LOGO_BLUE}"/>
+                <stop offset="100%" stop-color="{LOGO_CYAN}"/>
+            </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="{s}" height="{s}" rx="14" fill="url(#logoGrad)"/>
+        <text x="{s*0.5}" y="{s*0.62}" font-family="Cairo-Bold, Arial, sans-serif"
+              font-size="{s*0.42}" font-weight="700" fill="#FFFFFF"
+              text-anchor="middle">R+</text>"""
+    elif name == "summary":
+        body = f"""
+        <rect x="0" y="0" width="{s}" height="{s}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <rect x="{s*0.2}" y="{s*0.33}" width="{s*0.6}" height="{s*0.12}" fill="{color}"/>
+        <rect x="{s*0.2}" y="{s*0.56}" width="{s*0.45}" height="{s*0.12}" fill="{color}"/>
+        <rect x="{s*0.2}" y="{s*0.78}" width="{s*0.55}" height="{s*0.12}" fill="{color}"/>"""
     elif name == "patient":
-        d.add(Circle(s / 2, s / 2, s * 0.45, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5))
-        d.add(Circle(s / 2, s * 0.38, s * 0.14, fillColor=color, strokeColor=None))
-        d.add(Rect(s * 0.28, s * 0.55, s * 0.44, s * 0.22, fillColor=color, strokeColor=None, rx=2, ry=2))
-    
+        body = f"""
+        <circle cx="{s/2}" cy="{s/2}" r="{s*0.45}" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <circle cx="{s/2}" cy="{s*0.42}" r="{s*0.14}" fill="{color}"/>
+        <rect x="{s*0.28}" y="{s*0.60}" width="{s*0.44}" height="{s*0.22}" rx="4" fill="{color}"/>"""
     elif name == "findings":
-        d.add(Circle(s / 2, s / 2, s * 0.45, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5))
-        d.add(Line(s * 0.2, s * 0.5, s * 0.8, s * 0.5, strokeColor=color, strokeWidth=1.2))
-        d.add(Line(s * 0.5, s * 0.2, s * 0.5, s * 0.8, strokeColor=color, strokeWidth=1.2))
-    
+        body = f"""
+        <circle cx="{s/2}" cy="{s/2}" r="{s*0.45}" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <line x1="{s*0.2}" y1="{s*0.5}" x2="{s*0.8}" y2="{s*0.5}" stroke="{color}" stroke-width="3"/>
+        <line x1="{s*0.5}" y1="{s*0.2}" x2="{s*0.5}" y2="{s*0.8}" stroke="{color}" stroke-width="3"/>"""
     elif name == "ai":
-        d.add(Rect(s * 0.1, s * 0.15, s * 0.8, s * 0.7, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=3, ry=3))
-        d.add(Circle(s * 0.35, s * 0.5, s * 0.07, fillColor=color, strokeColor=None))
-        d.add(Circle(s * 0.65, s * 0.5, s * 0.07, fillColor=color, strokeColor=None))
-        d.add(Line(s * 0.3, s * 0.3, s * 0.7, s * 0.3, strokeColor=color, strokeWidth=1))
-    
+        body = f"""
+        <rect x="{s*0.1}" y="{s*0.15}" width="{s*0.8}" height="{s*0.7}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <circle cx="{s*0.35}" cy="{s*0.5}" r="{s*0.07}" fill="{color}"/>
+        <circle cx="{s*0.65}" cy="{s*0.5}" r="{s*0.07}" fill="{color}"/>
+        <line x1="{s*0.3}" y1="{s*0.7}" x2="{s*0.7}" y2="{s*0.7}" stroke="{color}" stroke-width="2"/>"""
     elif name == "recommend":
-        d.add(Rect(s * 0.15, s * 0.05, s * 0.7, s * 0.9, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Line(s * 0.28, s * 0.7, s * 0.72, s * 0.7, strokeColor=color, strokeWidth=0.8))
-        d.add(Line(s * 0.28, s * 0.5, s * 0.72, s * 0.5, strokeColor=color, strokeWidth=0.8))
-        d.add(Line(s * 0.28, s * 0.3, s * 0.6, s * 0.3, strokeColor=color, strokeWidth=0.8))
-    
+        body = f"""
+        <rect x="{s*0.15}" y="{s*0.05}" width="{s*0.7}" height="{s*0.9}" rx="4" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <line x1="{s*0.28}" y1="{s*0.3}" x2="{s*0.72}" y2="{s*0.3}" stroke="{color}" stroke-width="1.6"/>
+        <line x1="{s*0.28}" y1="{s*0.5}" x2="{s*0.72}" y2="{s*0.5}" stroke="{color}" stroke-width="1.6"/>
+        <line x1="{s*0.28}" y1="{s*0.7}" x2="{s*0.6}" y2="{s*0.7}" stroke="{color}" stroke-width="1.6"/>"""
     elif name == "warning":
-        d.add(Polygon([s * 0.5, s * 0.05, s * 0.95, s * 0.9, s * 0.05, s * 0.9],
-                      fillColor=colors.HexColor('#FFF1E6'),
-                      strokeColor=colors.HexColor('#D97706'), strokeWidth=0.8))
-        d.add(Line(s * 0.5, s * 0.35, s * 0.5, s * 0.65,
-                   strokeColor=colors.HexColor('#D97706'), strokeWidth=1.5))
-        d.add(Circle(s * 0.5, s * 0.78, s * 0.05,
-                     fillColor=colors.HexColor('#D97706'), strokeColor=None))
-    
+        body = f"""
+        <polygon points="{s*0.5},{s*0.1} {s*0.95},{s*0.95} {s*0.05},{s*0.95}" fill="#FFF1E6" stroke="#D97706" stroke-width="1.6"/>
+        <line x1="{s*0.5}" y1="{s*0.4}" x2="{s*0.5}" y2="{s*0.7}" stroke="#D97706" stroke-width="3"/>
+        <circle cx="{s*0.5}" cy="{s*0.82}" r="{s*0.045}" fill="#D97706"/>"""
     elif name == "doctor":
-        d.add(Circle(s / 2, s * 0.32, s * 0.22, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5))
-        d.add(Rect(s * 0.18, s * 0.55, s * 0.64, s * 0.4, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Line(s * 0.5, s * 0.6, s * 0.5, s * 0.85, strokeColor=color, strokeWidth=1))
-        d.add(Line(s * 0.38, s * 0.72, s * 0.62, s * 0.72, strokeColor=color, strokeWidth=1))
-    
+        body = f"""
+        <circle cx="{s/2}" cy="{s*0.32}" r="{s*0.22}" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <rect x="{s*0.18}" y="{s*0.55}" width="{s*0.64}" height="{s*0.4}" rx="4" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <line x1="{s*0.5}" y1="{s*0.6}" x2="{s*0.5}" y2="{s*0.85}" stroke="{color}" stroke-width="2"/>
+        <line x1="{s*0.38}" y1="{s*0.72}" x2="{s*0.62}" y2="{s*0.72}" stroke="{color}" stroke-width="2"/>"""
     elif name == "chart":
-        d.add(Rect(0, 0, s, s, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Rect(s * 0.15, s * 0.5, s * 0.15, s * 0.35, fillColor=color, strokeColor=None))
-        d.add(Rect(s * 0.4, s * 0.25, s * 0.15, s * 0.6, fillColor=color, strokeColor=None))
-        d.add(Rect(s * 0.65, s * 0.38, s * 0.15, s * 0.47, fillColor=color, strokeColor=None))
-    
+        body = f"""
+        <rect x="0" y="0" width="{s}" height="{s}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <rect x="{s*0.15}" y="{s*0.5}" width="{s*0.15}" height="{s*0.35}" fill="{color}"/>
+        <rect x="{s*0.4}" y="{s*0.25}" width="{s*0.15}" height="{s*0.6}" fill="{color}"/>
+        <rect x="{s*0.65}" y="{s*0.38}" width="{s*0.15}" height="{s*0.47}" fill="{color}"/>"""
     elif name == "tech":
-        d.add(Rect(s * 0.1, s * 0.1, s * 0.8, s * 0.8, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Circle(s * 0.5, s * 0.5, s * 0.2, fillColor=None, strokeColor=color, strokeWidth=0.8))
-        d.add(Circle(s * 0.5, s * 0.5, s * 0.07, fillColor=color, strokeColor=None))
-    
+        body = f"""
+        <rect x="{s*0.1}" y="{s*0.1}" width="{s*0.8}" height="{s*0.8}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <circle cx="{s*0.5}" cy="{s*0.5}" r="{s*0.2}" fill="none" stroke="{color}" stroke-width="1.6"/>
+        <circle cx="{s*0.5}" cy="{s*0.5}" r="{s*0.07}" fill="{color}"/>"""
     elif name == "stats":
-        d.add(Rect(0, 0, s, s, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Line(s * 0.15, s * 0.85, s * 0.15, s * 0.15, strokeColor=color, strokeWidth=1))
-        d.add(Line(s * 0.15, s * 0.15, s * 0.85, s * 0.15, strokeColor=color, strokeWidth=1))
-        d.add(Rect(s * 0.25, s * 0.55, s * 0.12, s * 0.28, fillColor=color, strokeColor=None))
-        d.add(Rect(s * 0.45, s * 0.35, s * 0.12, s * 0.48, fillColor=color, strokeColor=None))
-        d.add(Rect(s * 0.65, s * 0.45, s * 0.12, s * 0.38, fillColor=color, strokeColor=None))
-    
+        body = f"""
+        <rect x="0" y="0" width="{s}" height="{s}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <line x1="{s*0.15}" y1="{s*0.15}" x2="{s*0.15}" y2="{s*0.85}" stroke="{color}" stroke-width="2"/>
+        <line x1="{s*0.15}" y1="{s*0.85}" x2="{s*0.85}" y2="{s*0.85}" stroke="{color}" stroke-width="2"/>
+        <rect x="{s*0.25}" y="{s*0.55}" width="{s*0.12}" height="{s*0.28}" fill="{color}"/>
+        <rect x="{s*0.45}" y="{s*0.35}" width="{s*0.12}" height="{s*0.48}" fill="{color}"/>
+        <rect x="{s*0.65}" y="{s*0.45}" width="{s*0.12}" height="{s*0.38}" fill="{color}"/>"""
     elif name == "shield":
-        d.add(Polygon([s * 0.5, s * 0.05, s * 0.9, s * 0.25, s * 0.9, s * 0.6,
-                       s * 0.5, s * 0.95, s * 0.1, s * 0.6, s * 0.1, s * 0.25],
-                      fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.8))
-        d.add(Line(s * 0.35, s * 0.55, s * 0.48, s * 0.68, strokeColor=color, strokeWidth=1.5))
-        d.add(Line(s * 0.48, s * 0.68, s * 0.68, s * 0.42, strokeColor=color, strokeWidth=1.5))
-    
+        body = f"""
+        <polygon points="{s*0.5},{s*0.05} {s*0.9},{s*0.25} {s*0.9},{s*0.6} {s*0.5},{s*0.95} {s*0.1},{s*0.6} {s*0.1},{s*0.25}"
+                 fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.6"/>
+        <polyline points="{s*0.35},{s*0.55} {s*0.48},{s*0.68} {s*0.68},{s*0.42}" fill="none" stroke="{color}" stroke-width="3"/>"""
     elif name == "book":
-        d.add(Rect(s * 0.1, s * 0.1, s * 0.8, s * 0.8, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=1, ry=1))
-        d.add(Line(s * 0.5, s * 0.15, s * 0.5, s * 0.85, strokeColor=color, strokeWidth=0.8))
-        d.add(Line(s * 0.15, s * 0.35, s * 0.45, s * 0.35, strokeColor=color, strokeWidth=0.5))
-        d.add(Line(s * 0.15, s * 0.5, s * 0.45, s * 0.5, strokeColor=color, strokeWidth=0.5))
-        d.add(Line(s * 0.15, s * 0.65, s * 0.45, s * 0.65, strokeColor=color, strokeWidth=0.5))
-    
+        body = f"""
+        <rect x="{s*0.1}" y="{s*0.1}" width="{s*0.8}" height="{s*0.8}" rx="2" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <line x1="{s*0.5}" y1="{s*0.15}" x2="{s*0.5}" y2="{s*0.85}" stroke="{color}" stroke-width="1.6"/>
+        <line x1="{s*0.15}" y1="{s*0.35}" x2="{s*0.45}" y2="{s*0.35}" stroke="{color}" stroke-width="1"/>
+        <line x1="{s*0.15}" y1="{s*0.5}" x2="{s*0.45}" y2="{s*0.5}" stroke="{color}" stroke-width="1"/>
+        <line x1="{s*0.15}" y1="{s*0.65}" x2="{s*0.45}" y2="{s*0.65}" stroke="{color}" stroke-width="1"/>"""
     elif name == "normal":
-        d.add(Circle(s / 2, s / 2, s * 0.45, fillColor=STATUS_BG['green'],
-                     strokeColor=STATUS_ACCENT['green'], strokeWidth=1))
-        d.add(Line(s * 0.3, s * 0.5, s * 0.45, s * 0.65,
-                   strokeColor=STATUS_ACCENT['green'], strokeWidth=1.5))
-        d.add(Line(s * 0.45, s * 0.65, s * 0.7, s * 0.38,
-                   strokeColor=STATUS_ACCENT['green'], strokeWidth=1.5))
-    
+        gc = STATUS_ACCENT['green']
+        body = f"""
+        <circle cx="{s/2}" cy="{s/2}" r="{s*0.45}" fill="{STATUS_BG['green']}" stroke="{gc}" stroke-width="2"/>
+        <polyline points="{s*0.3},{s*0.5} {s*0.45},{s*0.65} {s*0.7},{s*0.38}" fill="none" stroke="{gc}" stroke-width="3"/>"""
     elif name == "hospital":
-        d.add(Rect(s * 0.1, s * 0.2, s * 0.8, s * 0.7, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Line(s * 0.5, s * 0.35, s * 0.5, s * 0.75, strokeColor=color, strokeWidth=1.5))
-        d.add(Line(s * 0.3, s * 0.55, s * 0.7, s * 0.55, strokeColor=color, strokeWidth=1.5))
-        d.add(Rect(s * 0.35, s * 0.05, s * 0.3, s * 0.15, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5))
-    
+        body = f"""
+        <rect x="{s*0.1}" y="{s*0.2}" width="{s*0.8}" height="{s*0.7}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <line x1="{s*0.5}" y1="{s*0.35}" x2="{s*0.5}" y2="{s*0.75}" stroke="{color}" stroke-width="3"/>
+        <line x1="{s*0.3}" y1="{s*0.55}" x2="{s*0.7}" y2="{s*0.55}" stroke="{color}" stroke-width="3"/>
+        <rect x="{s*0.35}" y="{s*0.05}" width="{s*0.3}" height="{s*0.15}" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>"""
     elif name == "quality":
-        d.add(Rect(0, 0, s, s, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Circle(s * 0.5, s * 0.5, s * 0.3, fillColor=None, strokeColor=color, strokeWidth=0.8))
-        d.add(Circle(s * 0.5, s * 0.5, s * 0.12, fillColor=color, strokeColor=None))
-    
+        body = f"""
+        <rect x="0" y="0" width="{s}" height="{s}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <circle cx="{s*0.5}" cy="{s*0.5}" r="{s*0.3}" fill="none" stroke="{color}" stroke-width="1.6"/>
+        <circle cx="{s*0.5}" cy="{s*0.5}" r="{s*0.12}" fill="{color}"/>"""
     elif name == "confidence":
-        d.add(Rect(0, 0, s, s, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Polygon([s * 0.5, s * 0.15, s * 0.85, s * 0.5,
-                       s * 0.5, s * 0.85, s * 0.15, s * 0.5],
-                      fillColor=None, strokeColor=color, strokeWidth=0.8))
-        d.add(Circle(s * 0.5, s * 0.5, s * 0.08, fillColor=color, strokeColor=None))
-    
+        body = f"""
+        <rect x="0" y="0" width="{s}" height="{s}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <polygon points="{s*0.5},{s*0.15} {s*0.85},{s*0.5} {s*0.5},{s*0.85} {s*0.15},{s*0.5}" fill="none" stroke="{color}" stroke-width="1.6"/>
+        <circle cx="{s*0.5}" cy="{s*0.5}" r="{s*0.08}" fill="{color}"/>"""
     elif name == "heatmap":
-        d.add(Rect(0, 0, s, s, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
+        cells = ""
         cell = s / 3
-        hm_colors = [
-            colors.HexColor('#4CAF50'), colors.HexColor('#FFEB3B'), colors.HexColor('#FF9800'),
-            colors.HexColor('#FFEB3B'), colors.HexColor('#F44336'), colors.HexColor('#FF9800'),
-            colors.HexColor('#4CAF50'), colors.HexColor('#FF9800'), colors.HexColor('#FFEB3B'),
-        ]
-        for row in range(3):
-            for col in range(3):
-                d.add(Rect(col * cell + s * 0.05, row * cell + s * 0.05,
-                           cell - s * 0.02, cell - s * 0.02,
-                           fillColor=hm_colors[row * 3 + col], strokeColor=None))
-    
+        for idx in range(9):
+            row, col = divmod(idx, 3)
+            cells += (f'<rect x="{col*cell+s*0.05}" y="{row*cell+s*0.05}" '
+                      f'width="{cell-s*0.04}" height="{cell-s*0.04}" fill="{_HEATMAP_COLORS[idx]}"/>')
+        body = f'<rect x="0" y="0" width="{s}" height="{s}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>{cells}'
     elif name == "compare":
-        d.add(Rect(s * 0.05, s * 0.15, s * 0.4, s * 0.7, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Rect(s * 0.55, s * 0.15, s * 0.4, s * 0.7, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
-        d.add(Line(s * 0.5, s * 0.3, s * 0.5, s * 0.7, strokeColor=color, strokeWidth=0.5))
-    
+        body = f"""
+        <rect x="{s*0.05}" y="{s*0.15}" width="{s*0.4}" height="{s*0.7}" rx="4" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>
+        <rect x="{s*0.55}" y="{s*0.15}" width="{s*0.4}" height="{s*0.7}" rx="4" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>"""
     elif name == "severity":
-        d.add(Rect(0, 0, s, s, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5, rx=2, ry=2))
         bars = [('green', 0.7), ('yellow', 0.5), ('orange', 0.3), ('red', 0.1)]
-        for clr, y in bars:
-            d.add(Rect(s * 0.15, s * y, s * 0.7, s * 0.1,
-                       fillColor=STATUS_ACCENT[clr], strokeColor=None))
-    
+        rects = "".join(
+            f'<rect x="{s*0.15}" y="{s*(1-y-0.1)}" width="{s*0.7}" height="{s*0.1}" fill="{STATUS_ACCENT[c]}"/>'
+            for c, y in bars
+        )
+        body = f'<rect x="0" y="0" width="{s}" height="{s}" rx="6" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>{rects}'
     elif name == "timeline":
-        d.add(Line(s * 0.1, s * 0.5, s * 0.9, s * 0.5, strokeColor=color, strokeWidth=1))
-        for cx in (0.2, 0.5, 0.8):
-            d.add(Circle(s * cx, s * 0.5, s * 0.08, fillColor=color, strokeColor=None))
-    
+        dots = "".join(f'<circle cx="{s*cx}" cy="{s*0.5}" r="{s*0.08}" fill="{color}"/>' for cx in (0.2, 0.5, 0.8))
+        body = f'<line x1="{s*0.1}" y1="{s*0.5}" x2="{s*0.9}" y2="{s*0.5}" stroke="{color}" stroke-width="2"/>{dots}'
     elif name == "pipeline":
-        for bx in (0.05, 0.4, 0.75):
-            d.add(Rect(s * bx, s * 0.3, s * 0.2, s * 0.4,
-                       fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5))
-        d.add(Line(s * 0.25, s * 0.5, s * 0.4, s * 0.5, strokeColor=color, strokeWidth=1))
-        d.add(Line(s * 0.6, s * 0.5, s * 0.75, s * 0.5, strokeColor=color, strokeWidth=1))
-    
+        boxes = "".join(
+            f'<rect x="{s*bx}" y="{s*0.3}" width="{s*0.2}" height="{s*0.4}" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>'
+            for bx in (0.05, 0.4, 0.75)
+        )
+        body = (boxes +
+                f'<line x1="{s*0.25}" y1="{s*0.5}" x2="{s*0.4}" y2="{s*0.5}" stroke="{color}" stroke-width="2"/>'
+                f'<line x1="{s*0.6}" y1="{s*0.5}" x2="{s*0.75}" y2="{s*0.5}" stroke="{color}" stroke-width="2"/>')
     else:
-        d.add(Circle(s / 2, s / 2, s * 0.4, fillColor=SOFT_BLUE, strokeColor=color, strokeWidth=0.5))
-    
-    return d
+        body = f'<circle cx="{s/2}" cy="{s/2}" r="{s*0.4}" fill="{SOFT_BLUE}" stroke="{color}" stroke-width="1.5"/>'
+
+    return f'<svg width="{sz}" height="{sz}" viewBox="0 0 {s} {s}" xmlns="http://www.w3.org/2000/svg">{body}</svg>'

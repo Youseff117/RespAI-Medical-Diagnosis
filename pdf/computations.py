@@ -29,12 +29,12 @@ from .config import (
 def analyze_results(probabilities: dict) -> list:
     """
     Analyze disease probabilities and return structured results.
-    
+
     This function is called by app.py and MUST maintain this signature.
-    
+
     Args:
         probabilities: Dict mapping disease names to probability values (0.0-1.0)
-    
+
     Returns:
         list: Sorted list of result dicts, each containing:
             - disease: str (English name)
@@ -46,13 +46,13 @@ def analyze_results(probabilities: dict) -> list:
             - flagged: bool (True if probability >= threshold)
     """
     results = []
-    
+
     for disease, prob in probabilities.items():
         if disease not in diseases_info:
             continue
-        
+
         threshold = DISEASE_THRESHOLDS.get(disease, 0.50)
-        
+
         # Determine color and status based on threshold
         if prob >= threshold:
             color = "red"
@@ -66,7 +66,7 @@ def analyze_results(probabilities: dict) -> list:
         else:
             color = "green"
             status = "طبيعي ✅"
-        
+
         results.append({
             "disease": disease,
             "ar_name": diseases_info[disease]["ar_name"],
@@ -76,22 +76,22 @@ def analyze_results(probabilities: dict) -> list:
             "description": diseases_info[disease]["description"],
             "flagged": prob >= threshold,
         })
-    
+
     # Sort by probability (descending)
     results.sort(key=lambda x: x["probability"], reverse=True)
-    
+
     return results
 
 
 def get_top_findings(results: list) -> list:
     """
     Get only the flagged (abnormal) findings from results.
-    
+
     This function is called by app.py and MUST maintain this signature.
-    
+
     Args:
         results: List of result dicts from analyze_results()
-    
+
     Returns:
         list: Filtered list containing only flagged results
     """
@@ -105,16 +105,16 @@ def get_top_findings(results: list) -> list:
 def compute_overall_confidence(results: list) -> float:
     """
     Compute overall AI confidence as average of all probabilities.
-    
+
     Args:
         results: List of result dicts
-    
+
     Returns:
         float: Overall confidence percentage (0-95)
     """
     if not results:
         return 0.0
-    
+
     avg = sum(r['probability'] for r in results) / len(results)
     return round(min(95.0, avg), 1)
 
@@ -122,20 +122,20 @@ def compute_overall_confidence(results: list) -> float:
 def compute_severity_score(max_prob: float, flagged_count: int, total: int) -> float:
     """
     Compute severity score based on max probability and flagged ratio.
-    
+
     Formula: (max_prob * 0.6) + (flagged_ratio * 0.4)
-    
+
     Args:
         max_prob: Highest probability among all diseases
         flagged_count: Number of flagged (abnormal) diseases
         total: Total number of diseases analyzed
-    
+
     Returns:
         float: Severity score (0-100)
     """
     if total == 0:
         return 0
-    
+
     ratio = (flagged_count / total) * 100
     score = (max_prob * 0.6) + (ratio * 0.4)
     return round(min(100, max(0, score)), 1)
@@ -144,11 +144,11 @@ def compute_severity_score(max_prob: float, flagged_count: int, total: int) -> f
 def get_clinical_priority(max_prob: float, color: str) -> tuple:
     """
     Get clinical priority level based on max probability and color.
-    
+
     Args:
         max_prob: Highest probability
         color: Color code of the highest disease
-    
+
     Returns:
         tuple: (English priority, Arabic priority)
     """
@@ -164,11 +164,11 @@ def get_clinical_priority(max_prob: float, color: str) -> tuple:
 def get_ai_decision(max_prob: float, flagged_count: int) -> tuple:
     """
     Get AI decision classification.
-    
+
     Args:
         max_prob: Highest probability
         flagged_count: Number of flagged diseases
-    
+
     Returns:
         tuple: (English decision, Arabic decision)
     """
@@ -184,10 +184,10 @@ def get_ai_decision(max_prob: float, flagged_count: int) -> tuple:
 def get_confidence_level(confidence: float) -> tuple:
     """
     Get confidence level classification.
-    
+
     Args:
         confidence: Overall confidence percentage
-    
+
     Returns:
         tuple: (English level, Arabic level)
     """
@@ -203,10 +203,10 @@ def get_confidence_level(confidence: float) -> tuple:
 def get_quality_rating(score: int) -> str:
     """
     Get quality rating classification.
-    
+
     Args:
         score: Quality score (0-100)
-    
+
     Returns:
         str: Rating label ('Excellent', 'Good', 'Acceptable', 'Needs Review')
     """
@@ -222,10 +222,10 @@ def get_quality_rating(score: int) -> str:
 def get_risk_info(overall_color: str) -> tuple:
     """
     Get risk label information.
-    
+
     Args:
         overall_color: Color code of the overall risk
-    
+
     Returns:
         tuple: (English risk label, Arabic risk label)
     """
@@ -235,10 +235,10 @@ def get_risk_info(overall_color: str) -> tuple:
 def get_urgency_label(color: str) -> str:
     """
     Get urgency label for a disease.
-    
+
     Args:
         color: Color code of the disease
-    
+
     Returns:
         str: Urgency label ('Routine', 'Follow-up', 'Urgent', 'Immediate')
     """

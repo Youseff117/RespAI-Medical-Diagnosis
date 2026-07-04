@@ -72,7 +72,12 @@
     </div>
 
     <div class="field">
-      <span class="field-label">Username</span>
+  <span class="field-label">Full Name</span>
+  <input type="text" name="full_name" placeholder="Enter your full name" required>
+</div>
+
+<div class="field">
+  <span class="field-label">Username</span>
       <input type="text" name="username" placeholder="Choose a username" required>
     </div>
     <div class="field">
@@ -80,7 +85,21 @@
       <input type="password" name="password" placeholder="Choose a password" required>
     </div>
 
-    <!-- Doctor name — for patients only -->
+<div class="field">
+  <span class="field-label">Age</span>
+  <input type="text" name="age" placeholder="Enter your age" required>
+</div>
+
+<div class="field">
+  <span class="field-label">Gender</span>
+  <select name="gender" required style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;">
+    <option value="">Select gender</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+  </select>
+</div>
+
+<!-- Doctor name — for patients only -->
     <div class="doctor-field show" id="doctorField">
       <span class="doctor-field-label">🩺 Doctor's Username</span>
       <input type="text" name="doctor_name" placeholder="Enter your doctor's username" id="doctorNameInput">

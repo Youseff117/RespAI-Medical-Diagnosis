@@ -8,15 +8,15 @@
   <style>
     :root {
       --bg:#03070f; --s1:#080f1e; --s2:#0c1628;
-      --cyan:#00e5ff; --blue:#0057ff; --red:#ff3b5c;
+      --cyan:#00D9F5; --blue:#1565D8; --red:#ff3b5c;
       --amber:#ffaa00; --green:#00e096; --text:#d0daf0;
-      --dim:#5a6a8a; --border:rgba(0,229,255,.10);
+      --dim:#5a6a8a; --border:rgba(0,217,245,.10);
     }
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
     html{scroll-behavior:smooth;}
     body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:400;min-height:100vh;overflow-x:hidden;}
     body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.4;}
-    .glow-top{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(0,87,255,.18) 0%,transparent 70%);pointer-events:none;z-index:0;}
+    .glow-top{position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(21,101,216,.18) 0%,transparent 70%);pointer-events:none;z-index:0;}
     nav{position:sticky;top:0;z-index:100;background:rgba(3,7,15,.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;}
     .brand{display:flex;align-items:center;gap:14px;text-decoration:none;}
     .brand-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;}
@@ -44,17 +44,17 @@
 
     /* Clinical Summary */
     .clinical-summary{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 36px;animation:fadeSlideUp .6s .22s cubic-bezier(.22,1,.36,1) both;}
-    .clinical-inner{background:linear-gradient(120deg,rgba(0,87,255,.10),rgba(0,229,255,.04));border:1px solid rgba(0,229,255,.18);border-radius:16px;padding:24px 30px;}
+    .clinical-inner{background:linear-gradient(120deg,rgba(21,101,216,.10),rgba(0,217,245,.04));border:1px solid rgba(0,217,245,.18);border-radius:16px;padding:24px 30px;}
     .clinical-top{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
-    .clinical-icon{width:44px;height:44px;border-radius:10px;background:rgba(0,229,255,.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+    .clinical-icon{width:44px;height:44px;border-radius:10px;background:rgba(0,217,245,.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
     .clinical-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:4px;}
     .clinical-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
     .clinical-text{font-size:13px;color:var(--text);line-height:1.8;border-left:2px solid var(--cyan);padding-left:16px;}
     .clinical-time{font-size:10px;color:var(--dim);margin-top:12px;text-align:right;}
 
     .diagnosis-banner{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 36px;animation:fadeSlideUp .6s .2s cubic-bezier(.22,1,.36,1) both;}
-    .banner-inner{background:linear-gradient(120deg,rgba(0,87,255,.12),rgba(0,229,255,.06));border:1px solid rgba(0,229,255,.2);border-radius:16px;padding:24px 30px;display:flex;align-items:center;gap:20px;}
-    .banner-icon{font-size:32px;flex-shrink:0;width:56px;height:56px;border-radius:12px;background:rgba(0,229,255,.1);display:flex;align-items:center;justify-content:center;}
+    .banner-inner{background:linear-gradient(120deg,rgba(21,101,216,.12),rgba(0,217,245,.06));border:1px solid rgba(0,217,245,.2);border-radius:16px;padding:24px 30px;display:flex;align-items:center;gap:20px;}
+    .banner-icon{font-size:32px;flex-shrink:0;width:56px;height:56px;border-radius:12px;background:rgba(0,217,245,.1);display:flex;align-items:center;justify-content:center;}
     .banner-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px;}
     .banner-text{font-size:16px;font-weight:500;color:#fff;}
 
@@ -78,11 +78,29 @@
     .results-col{animation:fadeSlideUp .6s .3s cubic-bezier(.22,1,.36,1) both;}
     .results-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;}
     .results-sub{font-size:12px;color:var(--dim);margin-top:3px;margin-bottom:20px;}
+
+    /* Primary / Associated / Independent group headers */
+    .group-title{display:flex;align-items:center;gap:10px;margin:26px 0 12px;}
+    .group-title:first-of-type{margin-top:0;}
+    .group-title .group-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .group-title .group-label{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:#fff;}
+    .group-title .group-hint{font-size:10.5px;color:var(--dim);margin-left:4px;}
+    .group-title.primary .group-dot{background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+    .group-title.associated .group-dot{background:var(--blue);}
+    .group-title.independent .group-dot{background:var(--red);}
+    .independent-note{display:flex;align-items:flex-start;gap:8px;background:rgba(255,59,92,.06);border:1px solid rgba(255,59,92,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:11.5px;color:var(--text);line-height:1.6;}
+
+    .relation-badge{display:inline-block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:6px;}
+    .relation-badge.primary{background:rgba(0,217,245,.14);color:var(--cyan);border:1px solid rgba(0,217,245,.3);}
+    .relation-badge.associated{background:rgba(21,101,216,.14);color:#6ea8ff;border:1px solid rgba(21,101,216,.3);}
+    .relation-badge.independent{background:rgba(255,59,92,.12);color:var(--red);border:1px solid rgba(255,59,92,.3);}
+
     .d-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:10px;transition:border-color .25s,transform .25s,background .25s;cursor:default;border-left:3px solid;}
     .d-card:hover{background:var(--s2);transform:translateX(6px);}
     .d-card.lv-high{border-left-color:var(--red);background:rgba(255,59,92,.03);}
     .d-card.lv-mid{border-left-color:var(--amber);background:rgba(255,170,0,.03);}
     .d-card.lv-low{border-left-color:var(--green);}
+    .d-card.is-primary{border-left-width:4px;box-shadow:0 0 0 1px rgba(0,217,245,.15) inset;}
     .d-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
     .d-name{font-weight:600;font-size:15px;color:#fff;margin-bottom:3px;}
     .d-ar{font-size:12px;color:var(--dim);}
@@ -104,8 +122,9 @@
     .no-findings-sub{font-size:14px;color:var(--dim);}
     .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px;}
     .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:10px;font-size:14px;font-weight:500;text-decoration:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
-    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-weight:600;box-shadow:0 0 30px rgba(0,87,255,.3);}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-weight:600;box-shadow:0 0 30px rgba(21,101,216,.3);}
     .btn-primary:hover{opacity:.88;transform:translateY(-2px);}
+    .btn-primary.disabled{opacity:.4;pointer-events:none;box-shadow:none;}
     .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
     .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
     footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:24px 48px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--dim);flex-wrap:wrap;gap:12px;}
@@ -113,6 +132,41 @@
     .disclaimer{display:flex;align-items:center;gap:8px;background:rgba(255,170,0,.07);border:1px solid rgba(255,170,0,.2);border-radius:8px;padding:8px 14px;font-size:11px;color:var(--amber);max-width:500px;}
     @keyframes fadeSlideDown{from{opacity:0;transform:translateY(-24px);}to{opacity:1;transform:translateY(0);}}
     @keyframes fadeSlideUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+    /* ===== Status Banners (Preliminary / Approved / Rejected) ===== */
+    .status-banner{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 20px;}
+    @media(max-width:768px){.status-banner{padding:0 20px 16px;}}
+    .status-banner-inner{border-radius:14px;padding:16px 24px;display:flex;align-items:flex-start;gap:14px;}
+    .status-banner-icon{font-size:24px;flex-shrink:0;}
+    .status-banner-eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+    .status-banner-text{font-size:14px;font-weight:500;color:#fff;line-height:1.6;}
+
+    .status-banner.pending .status-banner-inner{background:rgba(255,170,0,.08);border:1px solid rgba(255,170,0,.3);}
+    .status-banner.pending .status-banner-eyebrow{color:var(--amber);}
+
+    .status-banner.approved .status-banner-inner{background:rgba(0,224,150,.08);border:1px solid rgba(0,224,150,.3);}
+    .status-banner.approved .status-banner-eyebrow{color:#00e096;}
+
+    .status-banner.rejected .status-banner-inner{background:rgba(255,59,92,.09);border:1px solid rgba(255,59,92,.35);}
+    .status-banner.rejected .status-banner-eyebrow{color:var(--red);}
+    .status-banner.rejected .status-banner-text{font-size:15px;font-weight:600;}
+    .rejected-reason{font-size:12.5px;color:var(--text);font-weight:400;margin-top:8px;line-height:1.7;border-left:2px solid var(--red);padding-left:12px;}
+
+    /* Superseded AI section wrapper (shown grayed-out under a rejection) */
+    .superseded-wrap{position:relative;opacity:.5;filter:grayscale(.3);pointer-events:none;user-select:none;}
+    .superseded-label{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 14px;}
+    @media(max-width:768px){.superseded-label{padding:0 20px 10px;}}
+    .superseded-label span{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);border:1px dashed var(--border);padding:6px 14px;border-radius:20px;}
+
+    /* Medication plan display */
+    .medication-plan{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 36px;animation:fadeSlideUp .6s .24s cubic-bezier(.22,1,.36,1) both;}
+    @media(max-width:768px){.medication-plan{padding:0 20px 24px;}}
+    .medication-inner{background:linear-gradient(120deg,rgba(255,170,0,.09),rgba(255,170,0,.02));border:1px solid rgba(255,170,0,.22);border-radius:16px;padding:24px 30px;}
+    .medication-top{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
+    .medication-icon{width:44px;height:44px;border-radius:10px;background:rgba(255,170,0,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+    .medication-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--amber);margin-bottom:4px;}
+    .medication-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+    .medication-text{font-size:13px;color:var(--text);line-height:1.9;border-left:2px solid var(--amber);padding-left:16px;white-space:pre-wrap;}
   </style>
 </head>
 <body>
@@ -134,9 +188,62 @@
   <p class="hero-sub">AI-powered analysis using DenseNet-121 trained on CheXpert dataset from Stanford University.</p>
 </div>
 
+{% set status = status | default('pending') %}
+
+<!-- ===================== STATUS BANNER ===================== -->
+{% if status == 'approved' %}
+<div class="status-banner approved">
+  <div class="status-banner-inner">
+    <span class="status-banner-icon">✅</span>
+    <div>
+      <div class="status-banner-eyebrow">Doctor Approved</div>
+      <div class="status-banner-text">This result has been reviewed and approved by Dr. {{ approved_by }} on {{ approved_at }}.</div>
+    </div>
+  </div>
+</div>
+{% elif status == 'rejected' %}
+<div class="status-banner rejected">
+  <div class="status-banner-inner">
+    <span class="status-banner-icon">❌</span>
+    <div>
+      <div class="status-banner-eyebrow">Requires Further Review</div>
+      <div class="status-banner-text">
+        The case requires further medical review. Please consult a specialist.
+        {% if reject_reason %}
+        <div class="rejected-reason">Doctor's note: {{ reject_reason }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="status-banner pending">
+  <div class="status-banner-inner">
+    <span class="status-banner-icon">🕓</span>
+    <div>
+      <div class="status-banner-eyebrow">Preliminary AI Analysis — Not Final</div>
+      <div class="status-banner-text">This is an automated preliminary result. Your doctor will review it shortly and confirm, adjust, or flag it for further review.</div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if status == 'rejected' %}
+<div class="superseded-label">
+  <span>🔒 Original AI Preliminary Analysis (superseded — for reference only)</span>
+</div>
+{% endif %}
+
+<div class="{% if status == 'rejected' %}superseded-wrap{% endif %}">
+
 {% set flagged_results = results | selectattr('flagged') | list %}
 {% set flagged_count = flagged_results | length %}
 {% set safe_count = results | length - flagged_count %}
+
+{% set primary_results = flagged_results | selectattr('relation', 'equalto', 'primary') | list %}
+{% set associated_results = flagged_results | selectattr('relation', 'equalto', 'associated') | list %}
+{% set independent_results = flagged_results | selectattr('relation', 'equalto', 'independent') | list %}
+{% set unclassified_results = flagged_results | rejectattr('relation', 'defined') | list %}
 
 <div class="summary-strip">
   <div class="stat-card danger">
@@ -162,7 +269,7 @@
     <div class="clinical-top">
       <div class="clinical-icon">🧠</div>
       <div>
-        <div class="clinical-label">AI Clinical Summary</div>
+        <div class="clinical-label">AI Clinical Summary{% if status == 'pending' %} &middot; Preliminary{% endif %}</div>
         <div class="clinical-title">Automated Radiological Impression</div>
       </div>
     </div>
@@ -171,15 +278,28 @@
   </div>
 </div>
 
-<!-- APPROVED BADGE -->
-{% if approved_by %}
+<!-- DOCTOR'S NOTE (approved only) -->
+{% if status == 'approved' and doctor_note %}
 <div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 48px 20px;">
-  <div style="background:rgba(0,224,150,.08);border:1px solid rgba(0,224,150,.3);border-radius:14px;padding:16px 24px;display:flex;align-items:center;gap:14px;">
-    <span style="font-size:24px;">✅</span>
-    <div>
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#00e096;margin-bottom:4px;">Doctor Approved</div>
-      <div style="font-size:14px;font-weight:500;color:#fff;">This result has been reviewed and approved by <strong>Dr. {{ approved_by }}</strong> on {{ approved_at }}</div>
+  <div style="background:rgba(21,101,216,.08);border:1px solid rgba(21,101,216,.25);border-radius:14px;padding:16px 24px;">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;">🩺 Doctor's Note</div>
+    <div style="font-size:13px;color:var(--text);line-height:1.8;white-space:pre-wrap;">{{ doctor_note }}</div>
+  </div>
+</div>
+{% endif %}
+
+<!-- MEDICATION PLAN (approved only) -->
+{% if status == 'approved' and medications %}
+<div class="medication-plan">
+  <div class="medication-inner">
+    <div class="medication-top">
+      <div class="medication-icon">💊</div>
+      <div>
+        <div class="medication-label">Prescribed by Your Doctor</div>
+        <div class="medication-title">Medication Plan</div>
+      </div>
     </div>
+    <div class="medication-text">{{ medications }}</div>
   </div>
 </div>
 {% endif %}
@@ -189,7 +309,7 @@
   <div class="banner-inner">
     <div class="banner-icon">🩺</div>
     <div>
-      <div class="banner-label">AI Diagnosis Summary</div>
+      <div class="banner-label">AI Diagnosis Summary{% if status == 'pending' %} &middot; Preliminary{% endif %}</div>
       <div class="banner-text">{{ diagnosis }}</div>
     </div>
   </div>
@@ -236,17 +356,22 @@
 
   <div class="results-col">
     <div class="results-title">Detailed Analysis</div>
-    <div class="results-sub">Showing flagged findings only · sorted by probability</div>
+    <div class="results-sub">Primary diagnosis, associated findings, and any independent findings &middot; sorted by probability</div>
 
     {% if flagged_results %}
-      {% for r in flagged_results %}
+
+      {% macro finding_card(r, relation, loop_index) %}
         {% if r.probability > 60 %}{% set lv = 'lv-high' %}
         {% elif r.probability > 40 %}{% set lv = 'lv-mid' %}
         {% else %}{% set lv = 'lv-low' %}{% endif %}
-
-        <div class="d-card {{ lv }}" style="animation:fadeSlideUp .4s {{ loop.index * 0.06 }}s cubic-bezier(.22,1,.36,1) both">
+        <div class="d-card {{ lv }}{% if relation == 'primary' %} is-primary{% endif %}" style="animation:fadeSlideUp .4s {{ loop_index * 0.06 }}s cubic-bezier(.22,1,.36,1) both">
           <div class="d-top">
             <div>
+              <span class="relation-badge {{ relation }}">
+                {% if relation == 'primary' %}Primary Diagnosis
+                {% elif relation == 'associated' %}Associated Finding
+                {% else %}Independent Finding{% endif %}
+              </span>
               <div class="d-name">{{ r.disease }}</div>
               <div class="d-ar">{{ r.ar_name }}</div>
             </div>
@@ -260,25 +385,66 @@
           </div>
           <div class="d-desc">{{ r.description }}</div>
         </div>
-      {% endfor %}
+      {% endmacro %}
+
+      {% if primary_results %}
+        <div class="group-title primary">
+          <span class="group-dot"></span>
+          <span class="group-label">Primary Diagnosis</span>
+        </div>
+        {% for r in primary_results %}{{ finding_card(r, 'primary', loop.index) }}{% endfor %}
+      {% endif %}
+
+      {% if associated_results %}
+        <div class="group-title associated">
+          <span class="group-dot"></span>
+          <span class="group-label">Associated Findings</span>
+          <span class="group-hint">clinically linked to the primary diagnosis</span>
+        </div>
+        {% for r in associated_results %}{{ finding_card(r, 'associated', loop.index + 1) }}{% endfor %}
+      {% endif %}
+
+      {% if independent_results %}
+        <div class="group-title independent">
+          <span class="group-dot"></span>
+          <span class="group-label">Other Significant Findings</span>
+          <span class="group-hint">not related to the primary diagnosis</span>
+        </div>
+        <div class="independent-note">
+          ⚠️ These findings are <strong>not clinically linked</strong> to the primary diagnosis above. They may represent a separate condition and should be evaluated independently.
+        </div>
+        {% for r in independent_results %}{{ finding_card(r, 'independent', loop.index + 2) }}{% endfor %}
+      {% endif %}
+
+      {% if unclassified_results %}
+        {# Fallback: results without a 'relation' key (e.g. unfiltered data) render as before #}
+        {% for r in unclassified_results %}{{ finding_card(r, 'associated', loop.index + 3) }}{% endfor %}
+      {% endif %}
+
     {% else %}
       <div class="no-findings">
         <div class="no-findings-icon">✅</div>
         <div class="no-findings-title">No Significant Findings</div>
-        <div class="no-findings-sub">All pathologies are within normal range. No medical review required.</div>
+        <div class="no-findings-sub">All pathologies are within normal range.{% if status == 'pending' %} Final confirmation from your doctor is still pending.{% else %} No medical review required.{% endif %}</div>
       </div>
     {% endif %}
 
     <div class="actions">
-      <a href="{{ url_for('download_report') }}" class="btn btn-primary">📥 Download PDF Report</a>
-      <a href="{{ url_for('upload_xray') }}" class="btn btn-ghost">⬅️ New Scan</a>
+      {% if status == 'approved' %}
+        <a href="{{ url_for('download_report') }}" class="btn btn-primary">📥 Download PDF Report</a>
+      {% else %}
+        <span class="btn btn-primary disabled" title="Available once your doctor approves this result">📥 PDF Report (after approval)</span>
+      {% endif %}
+      <a href="{{ url_for('upload_xray', new=1) }}" class="btn btn-ghost">⬅️ New Scan</a>
     </div>
   </div>
 </div>
 
+</div><!-- /superseded-wrap or plain wrapper -->
+
 <footer>
-  <div><strong>RESPAI</strong> ©️ 2025 · AI-Powered Respiratory Diagnostics</div>
-  <div class="disclaimer">⚠️ For clinical reference only · Not a substitute for professional medical diagnosis</div>
+  <div><strong>RESPAI</strong> &copy; 2025 &middot; AI-Powered Respiratory Diagnostics</div>
+  <div class="disclaimer">⚠️ For clinical reference only &middot; Not a substitute for professional medical diagnosis</div>
 </footer>
 </body>
 </html>

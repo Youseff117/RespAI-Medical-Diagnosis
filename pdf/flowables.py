@@ -1,133 +1,101 @@
 """
-Custom Flowables for PDF Report
-================================
-Contains custom drawing elements used in the report:
-- GradientProgressBar
-- RiskGauge
-- StarRating
+Custom "Flowables" for PDF Report (HTML/CSS/SVG version)
+============================================================
+Contains the HTML/SVG equivalents of the original ReportLab Flowables:
+- gradient_progress_bar()  (was GradientProgressBar)
+- risk_gauge()              (was RiskGauge)
+- star_rating()              (was StarRating)
+
+Each function returns a ready-to-embed HTML string.
 """
 
 import math
-from reportlab.platypus import Flowable
-from reportlab.graphics.shapes import Drawing, Rect, Line, Circle, Polygon, Wedge
-from reportlab.graphics import renderPDF
-from reportlab.lib import colors
 
-from .config import ACCENT_BLUE, STATUS_ACCENT, INK, WHITE, MUTED
-from .styles import FONT_BOLD, FONT_REGULAR
+from .config import ACCENT_BLUE, STATUS_ACCENT
 
 
-class GradientProgressBar(Flowable):
-    """Simple progress bar - NO text inside, NO 30 steps."""
-    def __init__(self, width, height, percentage, color_key='green'):
-        super().__init__()
-        self.width = width
-        self.height = height
-        self.percentage = max(0.0, min(100.0, float(percentage)))
-        self.color_key = color_key
+def gradient_progress_bar(percentage, color_key='green', width='100%', height='10px'):
+    """
+    Build a simple horizontal progress bar (no text inside).
 
-    def draw(self):
-        c = self.canv
-        w, h = self.width, self.height
-        
-        # 1. Background track
-        c.setFillColor(colors.HexColor('#EEF2F7'))
-        c.roundRect(0, 0, w, h, 3, fill=1, stroke=0)
-        
-        # 2. Filled portion
-        fill_w = (self.percentage / 100.0) * w
-        if fill_w > 1:
-            accent = STATUS_ACCENT.get(self.color_key, ACCENT_BLUE)
-            c.setFillColor(accent)
-            c.roundRect(0, 0, fill_w, h, 3, fill=1, stroke=0)
+    Args:
+        percentage: 0-100
+        color_key: key into STATUS_ACCENT ('green'/'yellow'/'orange'/'red')
+        width: CSS width (e.g. '100%' or '200px')
+        height: CSS height (e.g. '10px')
+
+    Returns:
+        str: HTML snippet.
+    """
+    pct = max(0.0, min(100.0, float(percentage)))
+    accent = STATUS_ACCENT.get(color_key, ACCENT_BLUE)
+    return (
+        f'<div class="progress-track" style="width:{width};height:{height};">'
+        f'<div class="progress-fill" style="width:{pct}%;background:{accent};"></div>'
+        f'</div>'
+    )
 
 
-class RiskGauge(Flowable):
-    """Circular gauge showing overall risk level."""
-    def __init__(self, size, percentage, color, label):
-        super().__init__()
-        self.size = size
-        self.width = size
-        self.height = size
-        self.percentage = max(0.0, min(100.0, float(percentage)))
-        self.color = color
-        self.label = label
+def risk_gauge(percentage, color_hex, label, size=90):
+    """
+    Build a circular gauge (SVG) showing overall risk level, ~270deg arc.
 
-    def draw(self):
-        c = self.canv
-        cx, cy = self.size / 2, self.size / 2
-        r_outer = self.size * 0.42
-        r_inner = r_outer * 0.65
-        stroke_w = r_outer - r_inner
+    Args:
+        percentage: 0-100
+        color_hex: accent color for the value arc
+        label: label text under the percentage
+        size: size in px
 
-        # Background arc
-        c.setStrokeColor(colors.HexColor('#E5E7EB'))
-        c.setLineWidth(stroke_w)
-        c.arc(cx - r_outer + stroke_w / 2, cy - r_outer + stroke_w / 2,
-              cx + r_outer - stroke_w / 2, cy + r_outer - stroke_w / 2,
-              startAng=-45, extent=270)
+    Returns:
+        str: HTML/SVG snippet.
+    """
+    pct = max(0.0, min(100.0, float(percentage)))
+    s = 100  # internal coordinate space
+    cx, cy = s / 2, s / 2
+    r = s * 0.38
+    stroke_w = s * 0.13
+    circumference = 2 * math.pi * r
+    # 270-degree arc (75% of full circle), starting at -225deg (i.e. bottom-left)
+    arc_fraction = 0.75
+    arc_len = circumference * arc_fraction
+    value_len = arc_len * (pct / 100.0)
 
-        # Value arc
-        if self.percentage > 0:
-            angle = (self.percentage / 100.0) * 270
-            c.setStrokeColor(self.color)
-            c.arc(cx - r_outer + stroke_w / 2, cy - r_outer + stroke_w / 2,
-                  cx + r_outer - stroke_w / 2, cy + r_outer - stroke_w / 2,
-                  startAng=225, extent=angle)
-
-        # White inner circle
-        c.setFillColor(WHITE)
-        c.circle(cx, cy, r_inner - stroke_w * 0.1, fill=1, stroke=0)
-
-        # Percentage text
-        c.setFont(FONT_BOLD, max(8, int(self.size * 0.17)))
-        c.setFillColor(self.color)
-        c.drawCentredString(cx, cy + self.size * 0.04, f"{int(self.percentage)}%")
-
-        # Label text
-        c.setFont(FONT_REGULAR, max(6, int(self.size * 0.09)))
-        c.setFillColor(MUTED)
-        c.drawCentredString(cx, cy - self.size * 0.15, self.label)
+    return f"""
+<div style="width:{size}px;height:{size}px;display:inline-block;text-align:center;">
+  <svg width="{size}" height="{size}" viewBox="0 0 {s} {s}" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="#E5E7EB" stroke-width="{stroke_w}"
+            stroke-dasharray="{arc_len} {circumference}" stroke-dashoffset="0"
+            transform="rotate(135 {cx} {cy})" stroke-linecap="round"/>
+    <circle cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="{color_hex}" stroke-width="{stroke_w}"
+            stroke-dasharray="{value_len} {circumference}" stroke-dashoffset="0"
+            transform="rotate(135 {cx} {cy})" stroke-linecap="round"/>
+    <text x="{cx}" y="{cy - 2}" text-anchor="middle" font-size="{s*0.17}"
+          font-weight="bold" fill="{color_hex}">{int(pct)}%</text>
+    <text x="{cx}" y="{cy + s*0.16}" text-anchor="middle" font-size="{s*0.09}"
+          fill="#5B6B80">{label}</text>
+  </svg>
+</div>"""
 
 
-class StarRating(Flowable):
-    """5-star visual rating."""
-    def __init__(self, score, max_score=100, size=0.6):
-        super().__init__()
-        self.score = score
-        self.max_score = max_score
-        self.size = size
-        self.width = size * 5.8
-        self.height = size * 1.1
+def star_rating(score, max_score=100, star_px=14):
+    """
+    Build a 5-star visual rating (full/half/empty stars) as HTML/CSS.
 
-    def _star_points(self, cx, cy, r_out, r_in, n=5):
-        pts = []
-        for i in range(n * 2):
-            angle = math.pi / 2 + i * math.pi / n
-            r = r_out if i % 2 == 0 else r_in
-            pts.extend([cx + r * math.cos(angle), cy + r * math.sin(angle)])
-        return pts
+    Args:
+        score: current score
+        max_score: max possible score (default 100)
+        star_px: font-size of each star in px
 
-    def draw(self):
-        c = self.canv
-        stars_full = (self.score / self.max_score) * 5
-        s = self.size
-        for i in range(5):
-            cx = i * s * 1.1 + s * 0.5
-            cy = s * 0.5
-            if i + 1 <= stars_full:
-                fill = colors.HexColor('#F59E0B')
-            elif i + 0.5 <= stars_full:
-                fill = colors.HexColor('#FCD34D')
-            else:
-                fill = colors.HexColor('#D1D5DB')
-            pts = self._star_points(cx, cy, s * 0.48, s * 0.2)
-            p = c.beginPath()
-            p.moveTo(pts[0], pts[1])
-            for j in range(2, len(pts), 2):
-                p.lineTo(pts[j], pts[j + 1])
-            p.close()
-            c.setFillColor(fill)
-            c.setStrokeColor(colors.HexColor('#E5E7EB'))
-            c.setLineWidth(0.3)
-            c.drawPath(p, fill=1, stroke=1)
+    Returns:
+        str: HTML snippet.
+    """
+    stars_full = (score / max_score) * 5 if max_score else 0
+    stars_html = []
+    for i in range(5):
+        fill_pct = max(0.0, min(1.0, stars_full - i)) * 100
+        stars_html.append(
+            f'<span class="star" style="width:{star_px}px;font-size:{star_px}px;">'
+            f'&#9733;<span class="star-fill" style="width:{fill_pct}%;">&#9733;</span>'
+            f'</span>'
+        )
+    return f'<span class="star-rating">{"".join(stars_html)}</span>'

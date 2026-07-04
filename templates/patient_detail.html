@@ -26,6 +26,7 @@
 
     .scan-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both;}
     .scan-card.approved{border-color:rgba(0,224,150,.3);background:rgba(0,224,150,.02);}
+    .scan-card.rejected{border-color:rgba(255,59,92,.3);background:rgba(255,59,92,.02);}
     .scan-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
     .scan-num{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--cyan);}
     .scan-time{font-size:11px;color:var(--dim);}
@@ -36,11 +37,12 @@
     .scan-tag.flagged{border-color:rgba(255,59,92,.4);color:var(--red);background:rgba(255,59,92,.08);}
     .scan-tag.clear{border-color:rgba(0,224,150,.4);color:var(--green);background:rgba(0,224,150,.08);}
     .scan-tag.approved-tag{border-color:rgba(0,224,150,.4);color:var(--green);background:rgba(0,224,150,.08);font-weight:600;}
+    .scan-tag.rejected-tag{border-color:rgba(255,59,92,.4);color:var(--red);background:rgba(255,59,92,.08);font-weight:600;}
 
     /* Doctor Note display */
     .doctor-note-display{background:rgba(0,87,255,.06);border:1px solid rgba(0,87,255,.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
     .doctor-note-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px;}
-    .doctor-note-text{font-size:13px;color:var(--text);line-height:1.7;}
+    .doctor-note-text{font-size:13px;color:var(--text);line-height:1.7;white-space:pre-wrap;}
 
     /* Images */
     .scan-images{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
@@ -54,18 +56,25 @@
     .approve-btn:hover{background:rgba(0,224,150,.22);transform:translateY(-1px);}
     .revoke-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;background:rgba(255,59,92,.08);color:var(--red);border:1px solid rgba(255,59,92,.3);}
     .revoke-btn:hover{background:rgba(255,59,92,.16);transform:translateY(-1px);}
+    .reject-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;background:rgba(255,59,92,.08);color:var(--red);border:1px solid rgba(255,59,92,.3);}
+    .reject-btn:hover{background:rgba(255,59,92,.16);transform:translateY(-1px);}
+    .reset-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;background:transparent;color:var(--dim);border:1px solid var(--border);}
+    .reset-btn:hover{border-color:var(--text);color:var(--text);}
+    .rejected-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;background:rgba(255,59,92,.08);color:var(--red);border:1px solid rgba(255,59,92,.3);}
+    .rejected-note-display{background:rgba(255,59,92,.06);border:1px solid rgba(255,59,92,.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
     .approved-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;background:rgba(0,224,150,.08);color:var(--green);border:1px solid rgba(0,224,150,.3);}
     .scan-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;}
 
     /* Confirm Modal */
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8888;align-items:center;justify-content:center;}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8888;align-items:center;justify-content:center;overflow-y:auto;padding:30px 0;}
     .modal-overlay.open{display:flex;}
-    .modal{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:36px;max-width:460px;width:90%;animation:fadeUp .3s cubic-bezier(.22,1,.36,1);}
+    .modal{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:36px;max-width:520px;width:90%;animation:fadeUp .3s cubic-bezier(.22,1,.36,1);margin:auto;}
     .modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;}
     .modal-sub{font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6;}
     .modal-note-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;display:block;}
     .modal-textarea{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:90px;transition:border-color .2s;margin-bottom:20px;}
     .modal-textarea:focus{border-color:var(--cyan);}
+    .modal-textarea.meds{min-height:120px;font-family:'Inter',monospace,sans-serif;}
     .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
     .modal-cancel{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;background:transparent;color:var(--dim);border:1px solid var(--border);transition:all .2s;}
     .modal-cancel:hover{border-color:var(--text);color:var(--text);}
@@ -73,6 +82,9 @@
     .modal-confirm:hover{background:rgba(0,224,150,.25);}
     .modal-confirm-revoke{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;background:rgba(255,59,92,.12);color:var(--red);border:1px solid rgba(255,59,92,.3);transition:all .2s;}
     .modal-confirm-revoke:hover{background:rgba(255,59,92,.22);}
+    .meds-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+    .meds-quick{font-size:10.5px;padding:5px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+    .meds-quick:hover{border-color:var(--cyan);color:var(--cyan);}
 
     /* Lightbox */
     .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;}
@@ -84,6 +96,17 @@
 
     .no-scans{background:var(--s1);border:1px dashed var(--border);border-radius:14px;padding:48px;text-align:center;color:var(--dim);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+    /* ===== Smart Medical Typing (Step 1: Autocomplete) ===== */
+    .smart-type-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.25);padding:2px 8px;border-radius:20px;margin-inline-start:8px;vertical-align:middle;}
+    .autocomplete-box{position:fixed;z-index:99999;background:var(--s2);border:1px solid rgba(0,229,255,.35);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.5);max-height:190px;overflow-y:auto;min-width:180px;display:none;}
+    .autocomplete-box.open{display:block;}
+    .autocomplete-item{padding:8px 12px;font-size:13px;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center;}
+    .autocomplete-item .term{font-weight:500;}
+    .autocomplete-item .hint{font-size:10px;color:var(--dim);}
+    .autocomplete-item:hover,.autocomplete-item.active{background:rgba(0,229,255,.12);}
+    .autocomplete-item:not(:last-child){border-bottom:1px solid rgba(255,255,255,.04);}
+    .autocomplete-item .cat{font-size:8.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--dim);background:rgba(255,255,255,.06);padding:2px 6px;border-radius:8px;flex-shrink:0;}
   </style>
 </head>
 <body>
@@ -99,14 +122,21 @@
 <div class="modal-overlay" id="approveModal">
   <div class="modal">
     <div class="modal-title">✅ Confirm Approval</div>
-    <div class="modal-sub">You are about to approve this scan result. You can add an optional clinical note that will be visible to the patient.</div>
+    <div class="modal-sub">You are about to approve this scan result. You can add an optional clinical note and a medication plan that will be visible to the patient.</div>
     <label class="modal-note-label">🏥 Doctor Final Diagnosis</label>
     <select id="doctorDiagnosisInput" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-size:14px;font-family:Inter,sans-serif;outline:none;margin-bottom:16px;">
       <option value="">-- Select Diagnosis --</option>
       {% for d in doctor_diagnoses %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
     </select>
-    <label class="modal-note-label">Doctor's Note (optional)</label>
-    <textarea class="modal-textarea" id="doctorNoteInput" placeholder="e.g. Results reviewed. Please follow up in 2 weeks..."></textarea>
+    <label class="modal-note-label">Doctor's Note (optional) <span class="smart-type-badge">⚡ Smart Type</span></label>
+    <textarea class="modal-textarea" id="doctorNoteInput" placeholder="e.g. Results reviewed. Please follow up in 2 weeks..." autocomplete="off"></textarea>
+
+    <label class="modal-note-label">💊 Medication Plan (optional) <span class="smart-type-badge">⚡ Smart Type</span></label>
+    <div class="meds-toolbar">
+      <button type="button" class="meds-quick" onclick="insertMedTemplate()">+ Insert Template Line</button>
+    </div>
+    <textarea class="modal-textarea meds" id="medicationsInput" placeholder="e.g.&#10;1. Amoxicillin 500mg — 1 tab every 8h for 7 days&#10;2. Paracetamol 500mg — as needed for fever, max 4/day&#10;3. Salbutamol Inhaler — 2 puffs every 6h if wheezing" autocomplete="off"></textarea>
+
     <div class="modal-actions">
       <button class="modal-cancel" onclick="closeModal('approveModal')">Cancel</button>
       <button class="modal-confirm" id="approveConfirmBtn" onclick="submitApprove()">✅ Confirm Approve</button>
@@ -117,11 +147,25 @@
 <!-- Revoke Confirm Modal -->
 <div class="modal-overlay" id="revokeModal">
   <div class="modal">
-    <div class="modal-title">↩️ Revoke Approval</div>
-    <div class="modal-sub">Are you sure you want to revoke the approval for this scan? The patient will no longer see it as approved.</div>
+    <div class="modal-title">↩️ Reset to Pending</div>
+    <div class="modal-sub">This will clear the current decision (approval or rejection) and put the scan back into pending review. The patient will see it as "Preliminary — Not Final" again.</div>
     <div class="modal-actions">
       <button class="modal-cancel" onclick="closeModal('revokeModal')">Cancel</button>
-      <button class="modal-confirm-revoke" id="revokeConfirmBtn" onclick="submitRevoke()">↩️ Confirm Revoke</button>
+      <button class="modal-confirm-revoke" id="revokeConfirmBtn" onclick="submitRevoke()">↩️ Confirm Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Confirm Modal -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal">
+    <div class="modal-title">❌ Reject Scan</div>
+    <div class="modal-sub">The patient will be told this case requires further medical review and should consult a specialist. You can add an optional reason (not required, but helpful for your records).</div>
+    <label class="modal-note-label">Reason (optional)</label>
+    <textarea class="modal-textarea" id="rejectReasonInput" placeholder="e.g. Image quality insufficient for confident review, please re-scan..." autocomplete="off" style="margin-bottom:8px;"></textarea>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('rejectModal')">Cancel</button>
+      <button class="modal-confirm-revoke" id="rejectConfirmBtn" onclick="submitReject()">❌ Confirm Reject</button>
     </div>
   </div>
 </div>
@@ -130,8 +174,12 @@
 <form id="approveForm" method="POST" style="display:none">
   <input type="hidden" name="doctor_final_diagnosis" id="doctorDiagnosisHidden">
   <input type="hidden" name="doctor_note" id="doctorNoteHidden">
+  <input type="hidden" name="medications" id="medicationsHidden">
 </form>
 <form id="revokeForm" method="POST" style="display:none"></form>
+<form id="rejectForm" method="POST" style="display:none">
+  <input type="hidden" name="reject_reason" id="rejectReasonHidden">
+</form>
 
 <nav>
   <a class="brand" href="#">
@@ -151,7 +199,7 @@
   {% if scans %}
     {% for scan in scans | reverse %}
     
-    <div class="scan-card {% if scan.approved %}approved{% endif %}" style="animation-delay:{{ loop.index * 0.05 }}s">
+    <div class="scan-card {% if scan.status == 'approved' %}approved{% elif scan.status == 'rejected' %}rejected{% endif %}" style="animation-delay:{{ loop.index * 0.05 }}s">
       <div class="scan-header">
         <div>
           <div class="scan-num">Scan #{{ scans | length - loop.index0 }}</div>
@@ -186,6 +234,22 @@
         <div class="doctor-note-text">{{ scan.doctor_note }}</div>
       </div>
       {% endif %}
+      {% if scan.medications %}
+      <div class="doctor-note-display" style="background:rgba(255,170,0,.06);border-color:rgba(255,170,0,.2);">
+        <div class="doctor-note-label" style="color:var(--amber);">💊 Medication Plan</div>
+        <div class="doctor-note-text">{{ scan.medications }}</div>
+      </div>
+      {% endif %}
+      {% if scan.status == 'rejected' %}
+      <div class="rejected-note-display">
+        <div class="doctor-note-label" style="color:var(--red);">❌ Rejected — Further Review Needed</div>
+        {% if scan.reject_reason %}
+        <div class="doctor-note-text">{{ scan.reject_reason }}</div>
+        {% else %}
+        <div class="doctor-note-text" style="color:var(--dim);">No reason provided.</div>
+        {% endif %}
+      </div>
+      {% endif %}
 
       <div class="scan-meta">
         <span class="scan-tag">📁 {{ scan.filename }}</span>
@@ -195,17 +259,26 @@
         {% else %}
           <span class="scan-tag clear">✅ Clear</span>
         {% endif %}
-        {% if scan.approved %}
+        {% if scan.status == 'approved' %}
           <span class="scan-tag approved-tag">✅ Approved by Dr. {{ scan.approved_by }}</span>
+        {% elif scan.status == 'rejected' %}
+          <span class="scan-tag rejected-tag">❌ Rejected by Dr. {{ scan.approved_by }}</span>
+        {% else %}
+          <span class="scan-tag">🕓 Pending Review</span>
         {% endif %}
       </div>
 
       <div class="scan-actions">
-        {% if scan.approved %}
+        {% if scan.status == 'approved' %}
           <div class="approved-badge">✅ Approved on {{ scan.approved_at }}</div>
-          <button class="revoke-btn" onclick="openRevoke('{{ url_for('revoke_scan', patient_name=patient_name, scan_id=scan.id) }}')">↩️ Revoke</button>
+          <button class="reset-btn" onclick="openRevoke('{{ url_for('revoke_scan', patient_name=patient_name, scan_id=scan.id) }}')">↩️ Reset to Pending</button>
+        {% elif scan.status == 'rejected' %}
+          <div class="rejected-badge">❌ Rejected on {{ scan.approved_at }}</div>
+          <button class="approve-btn" onclick="openApprove('{{ url_for('approve_scan', patient_name=patient_name, scan_id=scan.id) }}')">✅ Approve Instead</button>
+          <button class="reset-btn" onclick="openRevoke('{{ url_for('revoke_scan', patient_name=patient_name, scan_id=scan.id) }}')">↩️ Reset to Pending</button>
         {% else %}
           <button class="approve-btn" onclick="openApprove('{{ url_for('approve_scan', patient_name=patient_name, scan_id=scan.id) }}')">✅ Approve Result</button>
+          <button class="reject-btn" onclick="openReject('{{ url_for('reject_scan', patient_name=patient_name, scan_id=scan.id) }}')">❌ Reject</button>
         {% endif %}
       </div>
     </div>
@@ -231,15 +304,18 @@
       document.getElementById('lightbox').classList.remove('open');
     }
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeModal('approveModal'); closeModal('revokeModal'); }});
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeModal('approveModal'); closeModal('revokeModal'); closeModal('rejectModal'); }});
 
   // Modals
   let currentApproveUrl = '';
   let currentRevokeUrl = '';
+  let currentRejectUrl = '';
 
   function openApprove(url) {
     currentApproveUrl = url;
     document.getElementById('doctorNoteInput').value = '';
+    document.getElementById('medicationsInput').value = '';
+    document.getElementById('doctorDiagnosisInput').value = '';
     document.getElementById('approveModal').classList.add('open');
   }
 
@@ -248,16 +324,33 @@
     document.getElementById('revokeModal').classList.add('open');
   }
 
+  function openReject(url) {
+    currentRejectUrl = url;
+    document.getElementById('rejectReasonInput').value = '';
+    document.getElementById('rejectModal').classList.add('open');
+  }
+
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
+  }
+
+  function insertMedTemplate() {
+    const ta = document.getElementById('medicationsInput');
+    const lineNum = (ta.value.match(/^\d+\./gm) || []).length + 1;
+    const template = (ta.value && !ta.value.endsWith('\n') ? '\n' : '') + lineNum + '. [Drug name] [dose] — [frequency] for [duration]';
+    ta.value += template;
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
   }
 
   function submitApprove() {
     const diag = document.getElementById("doctorDiagnosisInput").value;
     document.getElementById("doctorDiagnosisHidden").value = diag;
     const note = document.getElementById('doctorNoteInput').value;
-    const form = document.getElementById('approveForm');
     document.getElementById('doctorNoteHidden').value = note;
+    const meds = document.getElementById('medicationsInput').value;
+    document.getElementById('medicationsHidden').value = meds;
+    const form = document.getElementById('approveForm');
     form.action = currentApproveUrl;
     form.submit();
   }
@@ -267,6 +360,246 @@
     form.action = currentRevokeUrl;
     form.submit();
   }
+
+  function submitReject() {
+    const reason = document.getElementById('rejectReasonInput').value;
+    document.getElementById('rejectReasonHidden').value = reason;
+    const form = document.getElementById('rejectForm');
+    form.action = currentRejectUrl;
+    form.submit();
+  }
+</script>
+
+<script>
+  /* =====================================================================
+     SMART MEDICAL TYPING — Step 1: Autocomplete (v2 — categorized,
+     JSON-backed dictionary)
+     ---------------------------------------------------------------------
+     Standalone, additive feature. Does not touch any existing function
+     above. Attaches to #doctorNoteInput AND #medicationsInput.
+
+     WHERE THE DATA COMES FROM
+     - The dictionary now lives in static/data/medical_dictionary.json
+       (categorized: diseases_common, diseases_rare, radiology_terms,
+       clinical_terms, abbreviations, medications) instead of being
+       hardcoded here. To add/edit terms, just edit that JSON file — no
+       frontend code changes needed.
+     - Later, this JSON can be swapped for a real DB-backed endpoint
+       (e.g. GET /api/medical-terms) by changing only DICTIONARY_URL
+       below; everything else (indexing, search, rendering) stays as-is.
+
+     PERFORMANCE
+     - On load, all terms are grouped into buckets by their first letter
+       (a-z). When the doctor types, we only search inside the bucket
+       matching the current word's first letter instead of scanning the
+       whole dictionary — keeps lookups fast even at several thousand
+       terms.
+  ===================================================================== */
+  (function () {
+    const DICTIONARY_URL = "{{ url_for('static', filename='data/medical_dictionary.json') }}";
+
+    // Small built-in fallback (used only if the JSON file can't be
+    // loaded, e.g. offline/misconfigured static path) so the feature
+    // never fully breaks.
+    const FALLBACK_TERMS = [
+      { term: "Pneumonia", category: "Disease" }, { term: "Cardiomegaly", category: "Disease" },
+      { term: "Atelectasis", category: "Disease" }, { term: "Pleural Effusion", category: "Disease" },
+      { term: "Consolidation", category: "Disease" }, { term: "Pneumothorax", category: "Disease" },
+      { term: "Tuberculosis", category: "Disease" }, { term: "COPD", category: "Abbr", full: "Chronic Obstructive Pulmonary Disease" },
+      { term: "Follow-up", category: "Clinical" }, { term: "Clinical correlation", category: "Clinical" },
+      { term: "Amoxicillin", category: "Medication" }, { term: "Azithromycin", category: "Medication" },
+      { term: "Salbutamol", category: "Medication" }, { term: "Paracetamol", category: "Medication" },
+      { term: "Prednisolone", category: "Medication" },
+    ];
+
+    let index = new Map(); // first-letter (lowercase) -> array of {term, category, full}
+    let allTerms = [];
+
+    function addToIndex(entry) {
+      const key = entry.term.charAt(0).toLowerCase();
+      if (!index.has(key)) index.set(key, []);
+      index.get(key).push(entry);
+      allTerms.push(entry);
+    }
+
+    function buildIndexFromCategories(categories) {
+      const catLabels = {
+        diseases_common: "Disease",
+        diseases_rare: "Rare Disease",
+        radiology_terms: "Radiology",
+        clinical_terms: "Clinical",
+        medications: "Medication",
+      };
+      Object.keys(catLabels).forEach(key => {
+        (categories[key] || []).forEach(term => {
+          addToIndex({ term, category: catLabels[key] });
+        });
+      });
+      (categories.abbreviations || []).forEach(({ abbr, full }) => {
+        addToIndex({ term: abbr, category: "Abbr", full });
+      });
+    }
+
+    async function loadDictionary() {
+      try {
+        const res = await fetch(DICTIONARY_URL, { cache: "force-cache" });
+        if (!res.ok) throw new Error("Dictionary fetch failed: " + res.status);
+        const data = await res.json();
+        buildIndexFromCategories(data.categories || {});
+      } catch (err) {
+        console.warn("[RespAI SmartType] Falling back to built-in mini dictionary:", err);
+        FALLBACK_TERMS.forEach(addToIndex);
+      }
+    }
+
+    // Public mini-API — later a DB-backed dictionary can push terms in
+    // via addTerm()/addTerms() without touching the search/render logic.
+    window.RespAISmartType = {
+      addTerm(term, category = "Custom", full = null) {
+        if (term && !allTerms.some(e => e.term.toLowerCase() === term.toLowerCase())) {
+          addToIndex({ term, category, full });
+        }
+      },
+      addTerms(entries) {
+        entries.forEach(e => this.addTerm(e.term, e.category, e.full));
+      },
+      getDictionarySize() {
+        return allTerms.length;
+      },
+    };
+
+    const dictReady = loadDictionary();
+
+    // Floating suggestion box, appended to <body> so it isn't clipped by
+    // the modal's overflow and can be positioned with fixed coordinates.
+    const box = document.createElement('div');
+    box.className = 'autocomplete-box';
+    box.id = 'smartTypeBox';
+    document.body.appendChild(box);
+
+    let activeIndex = -1;
+    let currentMatches = [];
+    let activeTextarea = null;
+
+    function getCurrentWordRange(textarea) {
+      const pos = textarea.selectionStart;
+      const value = textarea.value;
+      const before = value.slice(0, pos);
+      const match = before.match(/[A-Za-z0-9/]+$/); // current word being typed
+      if (!match) return null;
+      const start = pos - match[0].length;
+      return { start, end: pos, word: match[0] };
+    }
+
+    function positionBox(textarea) {
+      const rect = textarea.getBoundingClientRect();
+      box.style.left = rect.left + 'px';
+      box.style.top = (rect.bottom + 4) + 'px';
+      box.style.width = rect.width + 'px';
+    }
+
+    function findMatches(prefix) {
+      const bucket = index.get(prefix.charAt(0).toLowerCase()) || [];
+      const matches = [];
+      for (const entry of bucket) {
+        if (entry.term.toLowerCase().startsWith(prefix)) {
+          matches.push(entry);
+          if (matches.length >= 6) break;
+        }
+      }
+      return matches;
+    }
+
+    function renderMatches() {
+      box.innerHTML = '';
+      currentMatches.forEach((entry, i) => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item' + (i === activeIndex ? ' active' : '');
+        const label = entry.full ? `${entry.term} <span style="color:var(--dim);font-weight:400;">— ${entry.full}</span>` : entry.term;
+        item.innerHTML = `<span class="term">${label}</span><span class="cat">${entry.category}</span>`;
+        item.addEventListener('mousedown', (e) => {
+          e.preventDefault(); // keep textarea focus
+          applySuggestion(entry.term);
+        });
+        box.appendChild(item);
+      });
+    }
+
+    function openBox(textarea) {
+      positionBox(textarea);
+      box.classList.add('open');
+    }
+
+    function closeBox() {
+      box.classList.remove('open');
+      currentMatches = [];
+      activeIndex = -1;
+      activeTextarea = null;
+    }
+
+    function applySuggestion(term) {
+      const textarea = activeTextarea;
+      if (!textarea) { closeBox(); return; }
+      const range = getCurrentWordRange(textarea);
+      if (!range) { closeBox(); return; }
+      const value = textarea.value;
+      const newValue = value.slice(0, range.start) + term + ' ' + value.slice(range.end);
+      const newCaret = range.start + term.length + 1;
+      textarea.value = newValue;
+      textarea.focus();
+      textarea.setSelectionRange(newCaret, newCaret);
+      closeBox();
+    }
+
+    function attachSmartType(textarea) {
+      if (!textarea) return;
+
+      textarea.addEventListener('input', async () => {
+        await dictReady; // make sure the dictionary has loaded at least once
+        const range = getCurrentWordRange(textarea);
+        if (!range || range.word.length < 2) { closeBox(); return; }
+
+        activeTextarea = textarea;
+        currentMatches = findMatches(range.word.toLowerCase());
+        if (currentMatches.length === 0) { closeBox(); return; }
+
+        activeIndex = 0;
+        renderMatches();
+        openBox(textarea);
+      });
+
+      textarea.addEventListener('keydown', (e) => {
+        if (activeTextarea !== textarea || !box.classList.contains('open') || currentMatches.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          activeIndex = (activeIndex + 1) % currentMatches.length;
+          renderMatches();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          activeIndex = (activeIndex - 1 + currentMatches.length) % currentMatches.length;
+          renderMatches();
+        } else if (e.key === 'Tab' || e.key === 'Enter') {
+          e.preventDefault();
+          applySuggestion(currentMatches[activeIndex].term);
+        } else if (e.key === 'Escape') {
+          closeBox();
+        }
+      });
+
+      textarea.addEventListener('blur', () => {
+        // slight delay so a click on a suggestion still registers
+        setTimeout(closeBox, 120);
+      });
+    }
+
+    attachSmartType(document.getElementById('doctorNoteInput'));
+    attachSmartType(document.getElementById('medicationsInput'));
+
+    window.addEventListener('resize', () => {
+      if (box.classList.contains('open') && activeTextarea) positionBox(activeTextarea);
+    });
+  })();
 </script>
 </body>
 </html>

@@ -2,5 +2,7 @@ flask==3.0.3
 torch==2.3.0
 torchvision==0.18.0
 opencv-python==4.8.1.78
-reportlab==4.2.0
 Pillow==10.4.0
+
+weasyprint>=62.0
+qrcode[pil]>=7.4

@@ -8,39 +8,42 @@ disease information, and thresholds used throughout the PDF generation.
 NO dependencies on other pdf modules (pure data module).
 """
 
-from reportlab.lib import colors
-
 # ═══════════════════════════════════════════════════════════════════════════
 # COLOR PALETTE (Medical Blue Theme)
 # ═══════════════════════════════════════════════════════════════════════════
 
-PRIMARY_BLUE   = colors.HexColor('#0B3B86')
-SECONDARY_BLUE = colors.HexColor('#1E5BBF')
-ACCENT_BLUE    = colors.HexColor('#2F7BE0')
-SOFT_BLUE      = colors.HexColor('#E8F0FE')
-ULTRA_LIGHT    = colors.HexColor('#F5F8FD')
-PAGE_BG        = colors.HexColor('#FAFBFD')
+PRIMARY_BLUE   = '#0B3B86'
+SECONDARY_BLUE = '#1E5BBF'
+ACCENT_BLUE    = '#2F7BE0'
+SOFT_BLUE      = '#E8F0FE'
+ULTRA_LIGHT    = '#F5F8FD'
+PAGE_BG        = '#FAFBFD'
 
-INK            = colors.HexColor('#1A2332')
-MUTED          = colors.HexColor('#5B6B80')
-LINE_GRAY      = colors.HexColor('#D9E0EA')
-BORDER_GRAY    = colors.HexColor('#E3E8F0')
-WHITE          = colors.white
+# Brand gradient (extracted from the RespAI "R+" logo mark) — used for the
+# cover-page logo, the running header bar, and section-divider accents.
+LOGO_BLUE      = '#1565D8'
+LOGO_CYAN      = '#00D9F5'
+
+INK            = '#1A2332'
+MUTED          = '#5B6B80'
+LINE_GRAY      = '#D9E0EA'
+BORDER_GRAY    = '#E3E8F0'
+WHITE          = '#FFFFFF'
 
 # Status colors (backgrounds - soft)
 STATUS_BG = {
-    'green':  colors.HexColor('#E9F7EF'),
-    'yellow': colors.HexColor('#FFF8E1'),
-    'orange': colors.HexColor('#FFF1E6'),
-    'red':    colors.HexColor('#FDECEC'),
+    'green':  '#E9F7EF',
+    'yellow': '#FFF8E1',
+    'orange': '#FFF1E6',
+    'red':    '#FDECEC',
 }
 
 # Status colors (accents - vibrant)
 STATUS_ACCENT = {
-    'green':  colors.HexColor('#1F9D55'),
-    'yellow': colors.HexColor('#C99A1E'),
-    'orange': colors.HexColor('#D97706'),
-    'red':    colors.HexColor('#C0392B'),
+    'green':  '#1F9D55',
+    'yellow': '#C99A1E',
+    'orange': '#D97706',
+    'red':    '#C0392B',
 }
 
 # Severity levels (English)
