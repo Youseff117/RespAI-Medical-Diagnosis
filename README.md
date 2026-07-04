@@ -1,5 +1,8 @@
 # RespAI – AI-Powered Chest X-ray Analysis System
 
+![RespAI Overview](screenshots/respai-overview.png)
+
+
 RespAI is an AI-powered clinical decision support system designed to assist in chest X-ray interpretation using deep learning.
 
 ## Features
